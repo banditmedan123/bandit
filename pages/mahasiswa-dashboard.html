@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Mahasiswa - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #22CE83;
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            will-change: transform;
+            transform: translateX(0);
+            background-color: #22CE83 !important;
+            visibility: visible;
+            opacity: 1;
+            display: block;
+        }
+
+        /* Sidebar navigation styles */
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            gap: 1rem;
+        }
+
+        .nav-link:hover,
+        .nav-item.active .nav-link {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-link:hover i,
+        .nav-item.active .nav-link i {
+            color: #FDD017;
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            color: #FDD017;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .dashboard-content {
+            background: #ffffff;
+            flex: 1;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #FDD017;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(253, 208, 23, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #22CE83;
+        }
+        
+        .stat-card h3 {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .description {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .recent-activities {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .section-header {
+            padding: 1.2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .activity-list {
+            padding: 0.8rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin-bottom: 0.4rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            background: #f8fafc;
+        }
+        
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .activity-content h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.2rem;
+        }
+        
+        .activity-content p {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, #22CE83 0%, #16a085 100%);
+            color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .welcome-content h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-content p {
+            opacity: 0.9;
+            font-size: 0.875rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 1rem 0.8rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #22CE83 0%, #16a085 100%);
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(34, 206, 131, 0.2);
+            border-color: #22CE83;
+        }
+        
+        .summary-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22CE83 0%, #16a085 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem auto;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(34, 206, 131, 0.3);
+        }
+        
+        .summary-card h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b 0%, #22CE83 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card p {
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        
+        /* Special styling for each card */
+        .summary-card:nth-child(1) {
+            background: linear-gradient(135deg, #ffffff 0%, #fef7e0 100%);
+        }
+        
+        .summary-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #FFD700 100%);
+        }
+        
+        .summary-card:nth-child(2) {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+        }
+        
+        .summary-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #3b82f6 100%);
+        }
+        
+        .summary-card:nth-child(3) {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        }
+        
+        .summary-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #22c55e 100%);
+        }
+
+
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: row;
+            }
+
+            .sidebar {
+                width: 200px;
+                position: fixed;
+                transform: none;
+                z-index: 1001;
+                transition: none;
+                background: #22CE83 !important;
+                visibility: visible;
+                opacity: 1;
+                display: block;
+                height: 100vh;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                left: 0;
+                top: 0;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .header {
+                padding: 1rem 1.5rem;
+            }
+
+            .sidebar-header {
+                padding: 1rem;
+            }
+
+            .sidebar-header img {
+                max-width: 80px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .nav-link {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .nav-link i {
+                font-size: 1rem;
+            }
+        }
+
+        /* Mobile Responsive for smaller screens */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 160px;
+                position: fixed;
+                transform: none;
+                background-color: #22CE83 !important;
+                visibility: visible;
+                opacity: 1;
+                height: 100vh;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .main-content {
+                margin-left: 160px;
+            }
+
+            .sidebar-header {
+                padding: 0.6rem;
+            }
+
+            .sidebar-header img {
+                max-width: 50px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 0.9rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.75rem;
+            }
+
+            .nav-link i {
+                font-size: 0.8rem;
+            }
+
+            .dashboard-content {
+                padding: 0.6rem;
+            }
+
+            .welcome-section {
+                padding: 0.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .welcome-content h1 {
+                font-size: 1.2rem;
+            }
+
+            .welcome-content p {
+                font-size: 0.8rem;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                gap: 0.5rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .summary-card {
+                padding: 0.6rem 0.5rem;
+            }
+
+            .summary-card-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.7rem;
+            }
+
+            .summary-card h3 {
+                font-size: 1rem;
+            }
+
+            .summary-card p {
+                font-size: 0.65rem;
+            }
+
+            .section-header {
+                padding: 0.8rem;
+            }
+
+            .section-header h2 {
+                font-size: 0.85rem;
+            }
+
+            .activity-list {
+                padding: 0.5rem;
+            }
+
+            .activity-item {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+
+            .activity-icon {
+                width: 25px;
+                height: 25px;
+                font-size: 0.6rem;
+            }
+
+            .activity-content h4 {
+                font-size: 0.7rem;
+            }
+
+            .activity-content p {
+                font-size: 0.6rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .sidebar {
+                width: 140px;
+            }
+
+            .main-content {
+                margin-left: 140px;
+            }
+
+            .sidebar-header {
+                padding: 0.5rem;
+            }
+
+            .sidebar-header img {
+                max-width: 40px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 0.8rem;
+            }
+
+            .nav-link {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .nav-link i {
+                font-size: 0.75rem;
+            }
+
+            .dashboard-content {
+                padding: 0.5rem;
+            }
+
+            .welcome-section {
+                padding: 0.6rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .welcome-content h1 {
+                font-size: 1.1rem;
+            }
+
+            .welcome-content p {
+                font-size: 0.75rem;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 0.4rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .summary-card {
+                padding: 0.5rem 0.4rem;
+            }
+
+            .summary-card-icon {
+                width: 25px;
+                height: 25px;
+                font-size: 0.6rem;
+            }
+
+            .summary-card h3 {
+                font-size: 0.9rem;
+            }
+
+            .summary-card p {
+                font-size: 0.6rem;
+            }
+
+            .section-header {
+                padding: 0.6rem;
+            }
+
+            .section-header h2 {
+                font-size: 0.8rem;
+            }
+
+            .activity-list {
+                padding: 0.4rem;
+            }
+
+            .activity-item {
+                padding: 0.4rem;
+                gap: 0.4rem;
+            }
+
+            .activity-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 0.5rem;
+            }
+
+            .activity-content h4 {
+                font-size: 0.65rem;
+            }
+
+            .activity-content p {
+                font-size: 0.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                    <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                    <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active">
+                        <a href="mahasiswa-dashboard.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mahasiswa-profil.html" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profil Mahasiswa</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mahasiswa-krs.html" class="nav-link">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>KRS</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mahasiswa-khs.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>KHS</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#" onclick="handleLogout()" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Header -->
+                <header class="header">
+                    <div class="header-left">
+                        <h1>Dashboard Mahasiswa</h1>
+                    </div>
+                </header>
+
+                <!-- Dashboard Content -->
+                <div class="dashboard-content">
+                    <!-- Welcome Section -->
+                    <div class="welcome-section">
+                        <div class="welcome-content">
+                            <h1 id="welcomeMessage">Selamat Datang!</h1>
+                            <p id="welcomeSubtitle">Dashboard Akademik Mahasiswa</p>
+                        </div>
+                    </div>
+
+                    <!-- Loading Message -->
+                    <div id="loadingMessage" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Memuat data mahasiswa...
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div id="summaryCards" class="summary-cards" style="display: none;">
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-book-open"></i></div>
+                            <h3 id="totalSksSummary">0</h3>
+                            <p>Total SKS</p>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-chart-line"></i></div>
+                            <h3 id="ipkSummary">0.00</h3>
+                            <p>IPK</p>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <h3 id="semesterAktifSummary">1</h3>
+                            <p>Semester </p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div id="recentActivities" class="recent-activities" style="display: none;">
+                        <div class="section-header">
+                            <h2>Aktivitas Terbaru</h2>
+                        </div>
+                        <div class="activity-list" id="activityList">
+                            <!-- Activities will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load mahasiswa data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMahasiswaData();
+        });
+
+        function loadMahasiswaData() {
+            // Cek apakah ada nim di localStorage/sessionStorage
+            let nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            if (nim) {
+                // Jika ada nim, langsung load data mahasiswa pakai nim
+                loadMahasiswaByNim(nim);
+            } else {
+                // Jika tidak ada, fallback ke session (API lama)
+                loadMahasiswaBySession();
+            }
+        }
+
+        function loadMahasiswaByNim(nim) {
+            fetch(`../api/get_mahasiswa_by_username.php?nim=${nim}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateDashboard(data.data);
+                    } else {
+                        // Jika gagal, tampilkan data default tanpa error
+                        console.log('Gagal memuat data mahasiswa, menggunakan data default');
+                        updateDashboardWithDefault();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Jika error, tampilkan data default tanpa error
+                    updateDashboardWithDefault();
+                });
+        }
+
+        function loadMahasiswaBySession() {
+            fetch('../api/get_mahasiswa_by_username.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateDashboard(data.data);
+                    } else {
+                        console.log('Gagal memuat data mahasiswa, menggunakan data default');
+                        updateDashboardWithDefault();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Jika error, tampilkan data default tanpa error
+                    updateDashboardWithDefault();
+                });
+        }
+
+        function updateDashboardWithDefault() {
+            hideLoading();
+            
+            // Update welcome message dengan data default
+            document.getElementById('welcomeMessage').textContent = 'Selamat Datang, Mahasiswa!';
+            document.getElementById('welcomeSubtitle').textContent = 'Dashboard Akademik Mahasiswa';
+
+            // Update summary cards dengan data default
+            document.getElementById('totalSksSummary').textContent = '0';
+            document.getElementById('ipkSummary').textContent = '0.00';
+            document.getElementById('semesterAktifSummary').textContent = '1';
+
+            // Show summary cards
+            document.getElementById('summaryCards').style.display = 'grid';
+
+            // Show no activities
+            displayNoActivities();
+            document.getElementById('recentActivities').style.display = 'block';
+        }
+
+        function updateDashboard(data) {
+            hideLoading();
+            
+            const mahasiswa = data.mahasiswa;
+
+            // Update welcome message
+            document.getElementById('welcomeMessage').textContent = `Selamat Datang, ${mahasiswa.nama_lengkap || 'Mahasiswa'}!`;
+            document.getElementById('welcomeSubtitle').textContent = `NIM: ${mahasiswa.nim} - ${mahasiswa.fakultas || 'Fakultas'} - ${mahasiswa.program_studi || 'Program Studi'}`;
+
+            // Update summary cards dengan data mahasiswa dari database
+            document.getElementById('totalSksSummary').textContent = mahasiswa.total_sks || 0;
+            
+            // Handle IPK yang mungkin bukan number
+            let ipkValue = mahasiswa.ipk;
+            if (ipkValue === null || ipkValue === undefined || ipkValue === '') {
+                ipkValue = 0;
+            }
+            // Convert to number and format
+            const ipkNumber = parseFloat(ipkValue) || 0;
+            document.getElementById('ipkSummary').textContent = ipkNumber.toFixed(2);
+            
+            document.getElementById('semesterAktifSummary').textContent = mahasiswa.semester || 1;
+
+            // Show summary cards
+            document.getElementById('summaryCards').style.display = 'grid';
+
+            // Load recent activities dan update total SKS dari KRS
+            loadRecentActivities(mahasiswa.nim);
+
+            // Show recent activities section
+            document.getElementById('recentActivities').style.display = 'block';
+        }
+
+        function loadRecentActivities(nim) {
+            console.log('Loading KRS data for NIM:', nim);
+            // Load recent KRS activities
+            fetch(`../api/krs.php?nim=${nim}`)
+                .then(response => {
+                    console.log('KRS API response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('KRS API response data:', data);
+                    if (data.status === 'success' && data.data.length > 0) {
+                        displayRecentActivities(data.data);
+                        updateTotalSKSFromKRS(data.data);
+                    } else {
+                        console.log('No KRS data found or empty data');
+                        displayNoActivities();
+                        updateTotalSKSFromKRS([]);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading activities:', error);
+                    displayNoActivities();
+                    updateTotalSKSFromKRS([]);
+                });
+        }
+
+
+
+        function updateTotalSKSFromKRS(krsData) {
+            console.log('Updating total SKS from KRS data:', krsData);
+            // Hitung total SKS dari KRS data
+            const totalSKS = krsData.reduce((total, item) => total + (parseInt(item.sks) || 0), 0);
+            console.log('Calculated total SKS:', totalSKS);
+            
+            // Update summary cards dengan data real dari KRS
+            document.getElementById('totalSksSummary').textContent = totalSKS;
+            console.log('Updated totalSksSummary element with value:', totalSKS);
+            
+            // Load KHS data untuk mendapatkan IPK yang akurat
+            loadKHSDataForIPK();
+        }
+        
+        function loadKHSDataForIPK() {
+            // Cek apakah ada nim di localStorage/sessionStorage
+            let nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            console.log('Loading KHS data for IPK, NIM:', nim);
+            if (nim) {
+                // Load KHS data untuk menghitung IPK
+                fetch(`../api/khs.php?nim=${nim}`)
+                    .then(response => {
+                        console.log('KHS API response status:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('KHS API response data:', data);
+                        if (data.status === 'success' && data.data && data.data.length > 0) {
+                            console.log('KHS data found, updating IPK');
+                            updateIPKFromKHS(data.data);
+                        } else {
+                            // Jika tidak ada data KHS, gunakan IPK dari database mahasiswa
+                            console.log('Tidak ada data KHS, menggunakan IPK dari database');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading KHS for IPK:', error);
+                    });
+            } else {
+                console.log('No NIM found in localStorage/sessionStorage');
+            }
+        }
+        
+        function updateIPKFromKHS(khsData) {
+            console.log('Updating IPK from KHS data:', khsData);
+            const ipk = hitungIPK(khsData);
+            console.log('Calculated IPK:', ipk);
+            document.getElementById('ipkSummary').textContent = ipk;
+            console.log('Updated ipkSummary element with value:', ipk);
+        }
+        
+        function hitungIPK(khsData) {
+            if (khsData.length === 0) return '0.00';
+            
+            let totalBobot = 0;
+            let totalSKS = 0;
+            
+            khsData.forEach(item => {
+                const bobot = parseFloat(getBobotNilai(item.nilai));
+                const sks = parseInt(item.sks) || 0;
+                totalBobot += (bobot * sks);
+                totalSKS += sks;
+            });
+            
+            return totalSKS > 0 ? (totalBobot / totalSKS).toFixed(2) : '0.00';
+        }
+        
+        function getBobotNilai(nilai) {
+            if (!nilai) return '0.0';
+            switch(nilai.toUpperCase()) {
+                case 'A': return '4.0';
+                case 'A-': return '3.7';
+                case 'B+': return '3.3';
+                case 'B': return '3.0';
+                case 'B-': return '2.7';
+                case 'C+': return '2.3';
+                case 'C': return '2.0';
+                case 'C-': return '1.7';
+                case 'D+': return '1.3';
+                case 'D': return '1.0';
+                case 'E': return '0.0';
+                default: return '0.0';
+            }
+        }
+
+        function displayRecentActivities(krsData) {
+            const activityList = document.getElementById('activityList');
+            let html = '';
+
+            // Show recent KRS entries
+            krsData.slice(0, 5).forEach((item, index) => {
+                html += `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>${item.nama_matakuliah || 'Mata Kuliah'}</h4>
+                            <p>KRS - ${item.semester} ${item.tahun_akademik} - ${item.sks} SKS</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            activityList.innerHTML = html;
+        }
+
+        function displayNoActivities() {
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = `
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: linear-gradient(135deg, #64748b 0%, #475569 100%);">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>Belum ada aktivitas</h4>
+                        <p>Mulai dengan mendaftar mata kuliah di KRS</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMessage').style.display = 'none';
+        }
+
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                fetch('../api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Clear localStorage/sessionStorage
+                        localStorage.removeItem('nim');
+                        sessionStorage.removeItem('nim');
+                        window.location.href = '../login.html';
+                    } else {
+                        alert('Error saat logout: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html> 

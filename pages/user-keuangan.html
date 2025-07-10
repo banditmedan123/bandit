@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keuangan - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+        .finance-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .finance-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .finance-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+        }
+        .summary-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .summary-card h4 {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        .summary-card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .finance-list {
+            padding: 1.5rem;
+        }
+        .finance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .finance-item:last-child {
+            border-bottom: none;
+        }
+        .finance-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .finance-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        .finance-icon.paid {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .finance-icon.pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .finance-icon.overdue {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .finance-info h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        .finance-info p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .finance-amount {
+            text-align: right;
+        }
+        .finance-amount .amount {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        .finance-amount .status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+        .status.paid {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status.overdue {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .btn-pay {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> SIOM</h2>
+                <p>Dashboard Mahasiswa</p>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="mahasiswa-dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-profil.html" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-krs.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>KRS Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-khs.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>KHS Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-jadwal.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Jadwal Kuliah</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="user-keuangan.html" class="nav-link">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Keuangan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-dokumen.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Dokumen</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../logout.php" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Keluar</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Keuangan</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <span class="user-name">Ahmad Fadillah</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="finance-container">
+                    <div class="finance-header">
+                        <h2>Ringkasan Keuangan</h2>
+                    </div>
+                    
+                    <div class="finance-summary">
+                        <div class="summary-card">
+                            <h4>Total Tagihan</h4>
+                            <p>Rp 15.000.000</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Sudah Dibayar</h4>
+                            <p>Rp 5.000.000</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Sisa Tagihan</h4>
+                            <p>Rp 10.000.000</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Status</h4>
+                            <p>Menunggu Pembayaran</p>
+                        </div>
+                    </div>
+
+                    <div class="finance-list">
+                        <div class="finance-item">
+                            <div class="finance-label">
+                                <div class="finance-icon paid">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="finance-info">
+                                    <h4>SPP Semester 1</h4>
+                                    <p>Sudah dibayar pada 15 Agustus 2024</p>
+                                </div>
+                            </div>
+                            <div class="finance-amount">
+                                <div class="amount">Rp 5.000.000</div>
+                                <div class="status paid">Lunas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="finance-item">
+                            <div class="finance-label">
+                                <div class="finance-icon pending">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="finance-info">
+                                    <h4>SPP Semester 2</h4>
+                                    <p>Jatuh tempo: 15 Januari 2025</p>
+                                </div>
+                            </div>
+                            <div class="finance-amount">
+                                <div class="amount">Rp 5.000.000</div>
+                                <div class="status pending">Menunggu</div>
+                                <button class="btn-pay">Bayar</button>
+                            </div>
+                        </div>
+                        
+                        <div class="finance-item">
+                            <div class="finance-label">
+                                <div class="finance-icon pending">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="finance-info">
+                                    <h4>Uang Kuliah Tunggal (UKT)</h4>
+                                    <p>Jatuh tempo: 15 Februari 2025</p>
+                                </div>
+                            </div>
+                            <div class="finance-amount">
+                                <div class="amount">Rp 3.000.000</div>
+                                <div class="status pending">Menunggu</div>
+                                <button class="btn-pay">Bayar</button>
+                            </div>
+                        </div>
+                        
+                        <div class="finance-item">
+                            <div class="finance-label">
+                                <div class="finance-icon pending">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="finance-info">
+                                    <h4>Biaya Praktikum</h4>
+                                    <p>Jatuh tempo: 15 Maret 2025</p>
+                                </div>
+                            </div>
+                            <div class="finance-amount">
+                                <div class="amount">Rp 2.000.000</div>
+                                <div class="status pending">Menunggu</div>
+                                <button class="btn-pay">Bayar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Payment button functionality
+        document.querySelectorAll('.btn-pay').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Fitur pembayaran akan segera tersedia!');
+            });
+        });
+    </script>
+    <script src="../script.js"></script>
+</body>
+</html> 

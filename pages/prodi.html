@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Program Studi - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .data-table {background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; margin-top: 2rem;}
+        .table-header {padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
+        .table-container {overflow-x: auto;}
+        table {width: 100%; border-collapse: collapse;}
+        th, td {padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0;}
+        th {background-color: #f8fafc; font-weight: 600; color: #1e293b; font-size: 0.875rem;}
+        td {color: #64748b; font-size: 0.875rem;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a href="mahasiswa.html" class="nav-link"><i class="fas fa-users"></i><span>Data Mahasiswa</span></a></li>
+                <li class="nav-item"><a href="fakultas.html" class="nav-link"><i class="fas fa-university"></i><span>Data Fakultas</span></a></li>
+                <li class="nav-item active"><a href="prodi.html" class="nav-link"><i class="fas fa-layer-group"></i><span>Data Program Studi</span></a></li>
+                <li class="nav-item"><a href="matakuliah.html" class="nav-link"><i class="fas fa-book"></i><span>Data Mata Kuliah</span></a></li>
+                <li class="nav-item"><a href="dosen.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i><span>Data Dosen</span></a></li>
+                <li class="nav-item"><a href="user.html" class="nav-link"><i class="fas fa-user-shield"></i><span>Data User</span></a></li>
+                <li class="nav-item"><a href="krs.html" class="nav-link"><i class="fas fa-clipboard-list"></i><span>KRS</span></a></li>
+                <li class="nav-item"><a href="khs.html" class="nav-link"><i class="fas fa-chart-line"></i><span>KHS</span></a></li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Data Program Studi</h1>
+                </div>
+            </header>
+            <div class="dashboard-content">
+                <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+                    <button class="btn-add" onclick="showProdiModal()"><i class="fas fa-plus"></i> Tambah Data</button>
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Daftar Program Studi</h2>
+                    </div>
+                    <div class="table-container">
+                        <table id="prodiTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Prodi</th>
+                                    <th>Kode Prodi</th>
+                                    <th>Fakultas</th>
+                                    <th>Kaprodi</th>
+                                    <th>Akreditasi</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Modal Form Program Studi -->
+    <div id="prodiModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1000; justify-content:center; align-items:center;">
+      <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:400px; max-width:90vw; max-height:90vh; overflow-y:auto; position:relative;">
+        <span class="close" id="closeProdiModal" style="position:absolute; top:1rem; right:1rem; font-size:1.5rem; cursor:pointer;">&times;</span>
+        <h2>Tambah Program Studi</h2>
+        <form id="prodiForm">
+          <div class="form-group">
+            <label for="nama_prodi">Nama Program Studi <span class="required">*</span></label>
+            <input type="text" id="nama_prodi" name="nama_prodi" required>
+          </div>
+          <div class="form-group">
+            <label for="kode_prodi">Kode Prodi <span class="required">*</span></label>
+            <input type="text" id="kode_prodi" name="kode_prodi" required>
+          </div>
+          <div class="form-group">
+            <label for="fakultas">Fakultas <span class="required">*</span></label>
+            <select id="fakultas" name="fakultas" required>
+              <option value="">Pilih Fakultas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="kaprodi">Kaprodi <span class="required">*</span></label>
+            <input type="text" id="kaprodi" name="kaprodi" required>
+          </div>
+          <button type="submit">Tambah Program Studi</button>
+        </form>
+        <div id="resultProdi" class="result" style="display:none;"></div>
+      </div>
+    </div>
+    <script>
+    function loadFakultas() {
+        fetch('../api/fakultas.php')
+            .then(res => res.json())
+            .then(result => {
+                const select = document.getElementById('fakultas');
+                if(result.status === 'success') {
+                    result.data.forEach(fakultas => {
+                        const option = document.createElement('option');
+                        option.value = fakultas.nama_fakultas;
+                        option.textContent = fakultas.nama_fakultas;
+                        select.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading fakultas:', error);
+            });
+    }
+    
+    function loadProdi() {
+        fetch('../api/prodi.php')
+            .then(res => res.json())
+            .then(result => {
+                const tbody = document.querySelector('#prodiTable tbody');
+                tbody.innerHTML = '';
+                if(result.status === 'success') {
+                    result.data.forEach(prodi => {
+                        tbody.innerHTML += `<tr><td>${prodi.id}</td><td>${prodi.nama_prodi}</td><td>${prodi.kode_prodi}</td><td>${prodi.nama_fakultas}</td><td>${prodi.kaprodi}</td><td>${prodi.akreditasi}</td><td><button onclick="deleteProdi(${prodi.id})" style="background:#dc2626;color:white;border:none;padding:0.5rem;border-radius:4px;cursor:pointer;">Hapus</button></td></tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6">Gagal memuat data</td></tr>';
+                }
+            })
+            .catch(() => {
+                const tbody = document.querySelector('#prodiTable tbody');
+                tbody.innerHTML = '<tr><td colspan="6">Gagal memuat data</td></tr>';
+            });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFakultas();
+        loadProdi();
+    });
+    </script>
+    <script>
+    function showProdiModal() {
+      document.getElementById('prodiForm').reset();
+      document.getElementById('resultProdi').style.display = 'none';
+      document.getElementById('prodiModal').style.display = 'flex';
+    }
+    document.getElementById('closeProdiModal').onclick = function() {
+      document.getElementById('prodiModal').style.display = 'none';
+    };
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('prodiModal')) {
+        document.getElementById('prodiModal').style.display = 'none';
+      }
+    };
+    document.getElementById('prodiForm').onsubmit = function(e) {
+      e.preventDefault();
+      const formData = {
+        nama_prodi: document.getElementById('nama_prodi').value,
+        kode_prodi: document.getElementById('kode_prodi').value,
+        fakultas: document.getElementById('fakultas').value,
+        kaprodi: document.getElementById('kaprodi').value
+      };
+      fetch('../api/prodi.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(result => {
+        const resultDiv = document.getElementById('resultProdi');
+        if (result.status === 'success') {
+          resultDiv.style.display = 'none';
+          document.getElementById('prodiForm').reset();
+        } else {
+          resultDiv.style.display = 'block';
+          resultDiv.style.backgroundColor = '#f8d7da';
+          resultDiv.style.color = '#721c24';
+          resultDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+        }
+      })
+      .catch(error => {
+        const resultDiv = document.getElementById('resultProdi');
+        resultDiv.style.display = 'block';
+        resultDiv.style.backgroundColor = '#f8d7da';
+        resultDiv.style.color = '#721c24';
+        resultDiv.innerHTML = '<pre>Error: ' + error.message + '</pre>';
+      });
+    };
+    </script>
+    <script>
+    function deleteProdi(id) {
+        if (confirm('Apakah Anda yakin ingin menghapus program studi ini?')) {
+            fetch('../api/prodi.php', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    alert('Program studi berhasil dihapus!');
+                    loadProdi(); // Reload data
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
+            });
+        }
+    }
+    </script>
+    <script src="../script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test User Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .form-group small { color: #666; font-size: 12px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Test User Form</h1>
+    
+    <div class="test-section">
+        <h3>Form Input User (Sesuai Database)</h3>
+        <form id="testUserForm">
+            <div class="form-group">
+                <label for="username">Username *</label>
+                <input type="text" id="username" name="username" maxlength="50" required>
+                <small>Maksimal 50 karakter, harus unik</small>
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" maxlength="100" required>
+                <small>Maksimal 100 karakter, harus unik</small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" minlength="6" required>
+                <small>Minimal 6 karakter</small>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Konfirmasi Password *</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" minlength="6" required>
+                <small>Harus sama dengan password</small>
+            </div>
+            <div class="form-group">
+                <label for="role">Role *</label>
+                <select id="role" name="role" required>
+                    <option value="">Pilih Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="dosen">Dosen</option>
+                    <option value="mahasiswa">Mahasiswa</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">Status *</label>
+                <select id="status" name="status" required>
+                    <option value="">Pilih Status</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Nonaktif</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fullName">Nama Lengkap *</label>
+                <input type="text" id="fullName" name="fullName" maxlength="100" required>
+                <small>Maksimal 100 karakter</small>
+            </div>
+            <div class="form-group">
+                <label for="phone">Nomor Telepon</label>
+                <input type="tel" id="phone" name="phone" maxlength="20">
+                <small>Opsional, maksimal 20 karakter</small>
+            </div>
+            <button type="submit">Test Tambah User</button>
+        </form>
+        <div id="formResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test Data Sample</h3>
+        <button onclick="fillSampleData()">Isi Data Sample</button>
+        <button onclick="clearForm()">Clear Form</button>
+    </div>
+
+    <script>
+        function showResult(elementId, data, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            element.className = 'result ' + (isSuccess ? 'success' : 'error');
+        }
+
+        document.getElementById('testUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Validasi field yang diperlukan
+            const requiredFields = ['username', 'email', 'password', 'confirmPassword', 'role', 'status', 'fullName'];
+            for (let field of requiredFields) {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    showResult('formResult', { error: `Field ${field} harus diisi!` }, false);
+                    return;
+                }
+            }
+            
+            // Validasi panjang username (max 50 karakter)
+            const username = formData.get('username').trim();
+            if (username.length > 50) {
+                showResult('formResult', { error: 'Username maksimal 50 karakter!' }, false);
+                return;
+            }
+            
+            // Validasi panjang email (max 100 karakter)
+            const email = formData.get('email').trim();
+            if (email.length > 100) {
+                showResult('formResult', { error: 'Email maksimal 100 karakter!' }, false);
+                return;
+            }
+            
+            // Validasi format email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showResult('formResult', { error: 'Format email tidak valid!' }, false);
+                return;
+            }
+            
+            // Validasi password
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            
+            if (password !== confirmPassword) {
+                showResult('formResult', { error: 'Password dan konfirmasi password tidak cocok!' }, false);
+                return;
+            }
+            
+            if (password.length < 6) {
+                showResult('formResult', { error: 'Password minimal 6 karakter!' }, false);
+                return;
+            }
+            
+            // Validasi panjang nama lengkap (max 100 karakter)
+            const fullName = formData.get('fullName').trim();
+            if (fullName.length > 100) {
+                showResult('formResult', { error: 'Nama lengkap maksimal 100 karakter!' }, false);
+                return;
+            }
+            
+            // Validasi panjang nomor telepon (max 20 karakter)
+            const phone = formData.get('phone') ? formData.get('phone').trim() : '';
+            if (phone && phone.length > 20) {
+                showResult('formResult', { error: 'Nomor telepon maksimal 20 karakter!' }, false);
+                return;
+            }
+            
+            // Validasi role
+            const role = formData.get('role');
+            const validRoles = ['admin', 'dosen', 'mahasiswa'];
+            if (!validRoles.includes(role)) {
+                showResult('formResult', { error: 'Role tidak valid!' }, false);
+                return;
+            }
+            
+            // Validasi status
+            const status = formData.get('status');
+            const validStatuses = ['aktif', 'nonaktif'];
+            if (!validStatuses.includes(status)) {
+                showResult('formResult', { error: 'Status tidak valid!' }, false);
+                return;
+            }
+            
+            const userData = {
+                username: username,
+                email: email,
+                password: password,
+                role: role,
+                status: status,
+                full_name: fullName,
+                phone: phone || null
+            };
+            
+            console.log('Sending user data:', userData);
+            
+            // Kirim data ke API
+            fetch('api/user.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('API Response:', data);
+                showResult('formResult', data, data.status === 'success');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showResult('formResult', { error: 'Terjadi kesalahan: ' + error.message }, false);
+            });
+        });
+
+        function fillSampleData() {
+            document.getElementById('username').value = 'testuser' + Date.now();
+            document.getElementById('email').value = 'testuser' + Date.now() + '@siom.com';
+            document.getElementById('password').value = 'password123';
+            document.getElementById('confirmPassword').value = 'password123';
+            document.getElementById('role').value = 'mahasiswa';
+            document.getElementById('status').value = 'aktif';
+            document.getElementById('fullName').value = 'Test User Sample';
+            document.getElementById('phone').value = '081234567890';
+        }
+
+        function clearForm() {
+            document.getElementById('testUserForm').reset();
+        }
+    </script>
+</body>
+</html> 

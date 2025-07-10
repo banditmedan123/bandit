@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Fakultas - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .main-content {
+            background: #ffffff;
+        }
+        
+        .data-table {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        
+        td {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-edit, .btn-delete {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .btn-delete {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .btn-edit:hover {
+            background-color: #fde68a;
+        }
+        
+        .btn-delete:hover {
+            background-color: #fecaca;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .page-btn:hover:not(.active) {
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a href="mahasiswa.html" class="nav-link"><i class="fas fa-users"></i><span>Data Mahasiswa</span></a></li>
+                <li class="nav-item"><a href="fakultas.html" class="nav-link"><i class="fas fa-university"></i><span>Data Fakultas</span></a></li>
+                <li class="nav-item"><a href="prodi.html" class="nav-link"><i class="fas fa-layer-group"></i><span>Data Program Studi</span></a></li>
+                <li class="nav-item"><a href="matakuliah.html" class="nav-link"><i class="fas fa-book"></i><span>Data Mata Kuliah</span></a></li>
+                <li class="nav-item"><a href="dosen.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i><span>Data Dosen</span></a></li>
+                <li class="nav-item"><a href="user.html" class="nav-link"><i class="fas fa-user-shield"></i><span>Data User</span></a></li>
+                <li class="nav-item"><a href="krs.html" class="nav-link"><i class="fas fa-clipboard-list"></i><span>KRS</span></a></li>
+                <li class="nav-item"><a href="khs.html" class="nav-link"><i class="fas fa-chart-line"></i><span>KHS</span></a></li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Data Fakultas</h1>
+                </div>
+            </header>
+            <div class="dashboard-content">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Daftar Fakultas</h3>
+                        <div class="table-actions">
+                            <button class="btn-add" onclick="showAddModal()">
+                                <i class="fas fa-plus"></i>
+                                Tambah Data
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Kode Fakultas</th>
+                                    <th>Nama Fakultas</th>
+                                    <th>Dekan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fakultasTableBody">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Tambah/Edit Fakultas -->
+    <div id="fakultasModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1000; justify-content:center; align-items:center;">
+        <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:400px; max-width:90vw; max-height:90vh; overflow-y:auto; position:relative;">
+            <span class="close" id="closeModal" style="position:absolute; top:1rem; right:1rem; font-size:1.5rem; cursor:pointer;">&times;</span>
+            <h2 id="modalTitle">Tambah Fakultas</h2>
+            <form id="fakultasForm">
+                <div style="margin-bottom:1rem;">
+                    <label for="nama_fakultas"><strong>Nama Fakultas *</strong></label><br>
+                    <input type="text" id="nama_fakultas" name="nama_fakultas" required style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:4px;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label for="kode_fakultas"><strong>Kode Fakultas *</strong></label><br>
+                    <input type="text" id="kode_fakultas" name="kode_fakultas" required style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:4px;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label for="dekan"><strong>Dekan *</strong></label><br>
+                    <select id="dekan" name="dekan" required style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:4px;">
+                        <option value="">Pilih Dosen</option>
+                    </select>
+                </div>
+                <div style="margin-top:2rem; display:flex; gap:1rem;">
+                    <button type="submit" class="btn-add" style="flex:1; padding:0.75rem;">Simpan</button>
+                    <button type="button" onclick="fakultasModal.style.display='none'" style="flex:1; padding:0.75rem; background:#6c757d; color:white; border:none; border-radius:4px; cursor:pointer;">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Modal logic
+        const fakultasModal = document.getElementById('fakultasModal');
+        const closeModal = document.getElementById('closeModal');
+        const fakultasForm = document.getElementById('fakultasForm');
+        const modalTitle = document.getElementById('modalTitle');
+        let editMode = false;
+        let editId = null;
+
+        function showAddModal() {
+            editMode = false;
+            modalTitle.textContent = 'Tambah Fakultas';
+            fakultasForm.reset();
+            fakultasModal.style.display = 'flex';
+            loadDosenSelect();
+        }
+
+        function editFakultas(id) {
+            // Implementasi edit fakultas
+            console.log('Edit fakultas dengan ID:', id);
+        }
+
+        function deleteFakultas(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus fakultas ini?')) {
+                console.log('Delete fakultas dengan ID:', id);
+            }
+        }
+
+        closeModal.onclick = function() {
+            fakultasModal.style.display = 'none';
+        };
+        
+        window.onclick = function(event) {
+            if (event.target === fakultasModal) {
+                fakultasModal.style.display = 'none';
+            }
+        };
+
+        fakultasForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                nama_fakultas: document.getElementById('nama_fakultas').value,
+                kode_fakultas: document.getElementById('kode_fakultas').value,
+                dekan: document.getElementById('dekan').value
+            };
+
+            fetch('../api/fakultas.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    alert('Data fakultas berhasil disimpan!');
+                    fakultasModal.style.display = 'none';
+                    fakultasForm.reset();
+                    // Reload data table
+                    loadFakultasData();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menyimpan data');
+            });
+        };
+
+        function loadFakultasData() {
+            fetch('../api/fakultas.php')
+                .then(response => response.json())
+                .then(result => {
+                    const tableBody = document.getElementById('fakultasTableBody');
+                    tableBody.innerHTML = '';
+                    
+                    if (result.status === 'success' && result.data) {
+                        result.data.forEach(fakultas => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${fakultas.kode_fakultas || '-'}</td>
+                                <td>${fakultas.nama_fakultas || '-'}</td>
+                                <td>${fakultas.dekan || '-'}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-edit" onclick="editFakultas(${fakultas.id})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-delete" onclick="deleteFakultas(${fakultas.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Tidak ada data fakultas</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('fakultasTableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;">Error loading data</td></tr>';
+                });
+        }
+
+        // Tambahkan fungsi untuk load data dosen ke select dekan
+        function loadDosenSelect() {
+            fetch('../api/dosen.php')
+                .then(response => response.json())
+                .then(result => {
+                    const select = document.getElementById('dekan');
+                    select.innerHTML = '<option value="">Pilih Dosen</option>';
+                    if (result.status === 'success' && result.data) {
+                        result.data.forEach(dosen => {
+                            const option = document.createElement('option');
+                            option.value = dosen.nama_dosen;
+                            option.textContent = dosen.nama_dosen + ' (' + dosen.nip + ')';
+                            select.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading dosen:', error);
+                });
+        }
+
+        // Load data saat halaman dimuat
+        loadFakultasData();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Keuangan - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS untuk dropdown mahasiswa */
+        #mahasiswa_id {
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+        
+        #mahasiswa_id option {
+            padding: 8px;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+        
+        /* Responsive dropdown */
+        @media (max-width: 768px) {
+            #mahasiswa_id {
+                font-size: 0.8rem;
+            }
+            
+            #mahasiswa_id option {
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Hover effect untuk dropdown */
+        #mahasiswa_id:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a href="mahasiswa.html" class="nav-link"><i class="fas fa-users"></i><span>Data Mahasiswa</span></a></li>
+                <li class="nav-item"><a href="fakultas.html" class="nav-link"><i class="fas fa-university"></i><span>Data Fakultas</span></a></li>
+                <li class="nav-item"><a href="prodi.html" class="nav-link"><i class="fas fa-layer-group"></i><span>Data Program Studi</span></a></li>
+                <li class="nav-item"><a href="matakuliah.html" class="nav-link"><i class="fas fa-book"></i><span>Data Mata Kuliah</span></a></li>
+                <li class="nav-item"><a href="dosen.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i><span>Data Dosen</span></a></li>
+                <li class="nav-item"><a href="user.html" class="nav-link"><i class="fas fa-user-shield"></i><span>Data User</span></a></li>
+                <li class="nav-item"><a href="krs.html" class="nav-link"><i class="fas fa-clipboard-list"></i><span>KRS</span></a></li>
+                <li class="nav-item"><a href="khs.html" class="nav-link"><i class="fas fa-chart-line"></i><span>KHS</span></a></li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Data Keuangan Mahasiswa</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Cari data keuangan...">
+                    </div>
+                    <!-- User profile dihapus -->
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="dashboard-content">
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label>Jenis Pembayaran</label>
+                        <select>
+                            <option value="">Semua Jenis</option>
+                            <option value="SPP">SPP</option>
+                            <option value="Uang Lab">Uang Lab</option>
+                            <option value="Uang Praktikum">Uang Praktikum</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select>
+                            <option value="">Semua Status</option>
+                            <option value="belum_bayar">Belum Bayar</option>
+                            <option value="sudah_bayar">Sudah Bayar</option>
+                            <option value="terlambat">Terlambat</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Semester</label>
+                        <select>
+                            <option value="">Semua Semester</option>
+                            <option value="Ganjil">Ganjil</option>
+                            <option value="Genap">Genap</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Daftar Data Keuangan</h3>
+                        <div class="table-actions">
+                            <button class="btn-add" onclick="showAddModal()">
+                                <i class="fas fa-plus"></i>
+                                Tambah Data Keuangan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Mahasiswa</th>
+                                    <th>Jenis Pembayaran</th>
+                                    <th>Jumlah</th>
+                                    <th>Semester</th>
+                                    <th>Tahun Akademik</th>
+                                    <th>Status</th>
+                                    <th>Tanggal Bayar</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="data-table-keuangan">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button class="page-btn">Previous</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Tambah/Edit Keuangan -->
+    <div id="keuanganModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1000; justify-content:center; align-items:center;">
+      <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:90vw; position:relative;">
+        <span class="close" id="closeModal" style="position:absolute; top:1rem; right:1rem; font-size:1.5rem; cursor:pointer;">&times;</span>
+        <h2 id="modalTitle">Tambah Data Keuangan</h2>
+        <form id="keuanganForm">
+          <div style="margin-bottom:1rem;">
+            <label for="mahasiswa_id">Mahasiswa</label><br>
+            <select id="mahasiswa_id" name="mahasiswa_id" required style="width:100%; padding:0.5rem;">
+              <option value="">Pilih Mahasiswa</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="jenis_pembayaran">Jenis Pembayaran</label><br>
+            <select id="jenis_pembayaran" name="jenis_pembayaran" required style="width:100%; padding:0.5rem;">
+              <option value="SPP">SPP</option>
+              <option value="Uang Lab">Uang Lab</option>
+              <option value="Uang Praktikum">Uang Praktikum</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="jumlah">Jumlah (Rp)</label><br>
+            <input type="number" id="jumlah" name="jumlah" required style="width:100%; padding:0.5rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="semester">Semester</label><br>
+            <select id="semester" name="semester" required style="width:100%; padding:0.5rem;">
+              <option value="Ganjil">Ganjil</option>
+              <option value="Genap">Genap</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="tahun_akademik">Tahun Akademik</label><br>
+            <input type="text" id="tahun_akademik" name="tahun_akademik" placeholder="2024/2025" required style="width:100%; padding:0.5rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="status">Status</label><br>
+            <select id="status" name="status" required style="width:100%; padding:0.5rem;">
+              <option value="belum_bayar">Belum Bayar</option>
+              <option value="sudah_bayar">Sudah Bayar</option>
+              <option value="terlambat">Terlambat</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="tanggal_bayar">Tanggal Bayar</label><br>
+            <input type="date" id="tanggal_bayar" name="tanggal_bayar" style="width:100%; padding:0.5rem;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label for="keterangan">Keterangan</label><br>
+            <textarea id="keterangan" name="keterangan" style="width:100%; padding:0.5rem; height:80px;"></textarea>
+          </div>
+          <button type="submit" class="btn-add" style="width:100%;">Simpan</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Modal logic
+        const keuanganModal = document.getElementById('keuanganModal');
+        const closeModal = document.getElementById('closeModal');
+        const keuanganForm = document.getElementById('keuanganForm');
+        const modalTitle = document.getElementById('modalTitle');
+        let editMode = false;
+        let editId = null;
+
+        function showAddModal() {
+            console.log('Opening add modal...');
+            editMode = false;
+            modalTitle.textContent = 'Tambah Data Keuangan';
+            keuanganForm.reset();
+            // Reload data mahasiswa untuk memastikan data terbaru
+            console.log('Reloading mahasiswa data for modal...');
+            loadMahasiswaData();
+            keuanganModal.style.display = 'flex';
+            console.log('Modal displayed');
+        }
+
+        function editKeuangan(id) {
+            // Ambil data dari tabel
+            const row = Array.from(document.querySelectorAll('.data-table-keuangan tr')).find(tr => tr.dataset.id === id);
+            if (row) {
+                document.getElementById('mahasiswa_id').value = row.dataset.mahasiswa_id;
+                document.getElementById('jenis_pembayaran').value = row.children[1].textContent;
+                document.getElementById('jumlah').value = row.children[2].textContent.replace(/[^\d]/g, '');
+                document.getElementById('semester').value = row.children[3].textContent;
+                document.getElementById('tahun_akademik').value = row.children[4].textContent;
+                document.getElementById('status').value = row.children[5].textContent.toLowerCase().replace(' ', '_');
+                document.getElementById('tanggal_bayar').value = row.children[6].textContent !== '-' ? row.children[6].textContent : '';
+                document.getElementById('keterangan').value = row.dataset.keterangan || '';
+                modalTitle.textContent = 'Edit Data Keuangan';
+                editMode = true;
+                editId = id;
+                keuanganModal.style.display = 'flex';
+            }
+        }
+
+        closeModal.onclick = function() {
+            keuanganModal.style.display = 'none';
+        };
+        window.onclick = function(event) {
+            if (event.target === keuanganModal) {
+                keuanganModal.style.display = 'none';
+            }
+        };
+        keuanganForm.onsubmit = function(e) {
+            e.preventDefault();
+            alert(editMode ? 'Edit data keuangan (simulasi)' : 'Tambah data keuangan (simulasi)');
+            keuanganModal.style.display = 'none';
+        };
+
+        // Load data keuangan
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Keuangan page');
+            
+            // Load data mahasiswa untuk dropdown
+            loadMahasiswaData();
+            
+            // Load data keuangan
+            fetch('../api/keuangan.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('.data-table-keuangan');
+                    tbody.innerHTML = '';
+                    data.forEach(item => {
+                        const statusClass = item.status === 'sudah_bayar' ? 'status-paid' : 
+                                          item.status === 'terlambat' ? 'status-overdue' : 'status-pending';
+                        const statusText = item.status === 'sudah_bayar' ? 'Sudah Bayar' : 
+                                         item.status === 'terlambat' ? 'Terlambat' : 'Belum Bayar';
+                        
+                        tbody.innerHTML += `
+                            <tr data-id="${item.id}" data-mahasiswa_id="${item.mahasiswa_id}" data-keterangan="${item.keterangan || ''}">
+                                <td>${item.nama_mahasiswa || 'Mahasiswa ' + item.mahasiswa_id}</td>
+                                <td>${item.jenis_pembayaran}</td>
+                                <td>Rp ${Number(item.jumlah).toLocaleString()}</td>
+                                <td>${item.semester}</td>
+                                <td>${item.tahun_akademik}</td>
+                                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                                <td>${item.tanggal_bayar || '-'}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-edit" onclick="editKeuangan('${item.id}')"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-delete" onclick="deleteKeuangan('${item.id}')"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading keuangan data:', error);
+                    // Tampilkan data dummy jika API belum tersedia
+                    const tbody = document.querySelector('.data-table-keuangan');
+                    tbody.innerHTML = `
+                        <tr data-id="1" data-mahasiswa_id="1" data-keterangan="Pembayaran SPP semester 1">
+                            <td>Ahmad Fadillah</td>
+                            <td>SPP</td>
+                            <td>Rp 5,000,000</td>
+                            <td>Ganjil</td>
+                            <td>2024/2025</td>
+                            <td><span class="status-badge status-paid">Sudah Bayar</span></td>
+                            <td>2024-08-01</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-edit" onclick="editKeuangan('1')"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete" onclick="deleteKeuangan('1')"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-id="2" data-mahasiswa_id="1" data-keterangan="Pembayaran SPP semester 2">
+                            <td>Ahmad Fadillah</td>
+                            <td>SPP</td>
+                            <td>Rp 5,000,000</td>
+                            <td>Genap</td>
+                            <td>2024/2025</td>
+                            <td><span class="status-badge status-pending">Belum Bayar</span></td>
+                            <td>-</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-edit" onclick="editKeuangan('2')"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete" onclick="deleteKeuangan('2')"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-id="3" data-mahasiswa_id="1" data-keterangan="Uang praktikum lab">
+                            <td>Ahmad Fadillah</td>
+                            <td>Uang Lab</td>
+                            <td>Rp 500,000</td>
+                            <td>Ganjil</td>
+                            <td>2024/2025</td>
+                            <td><span class="status-badge status-overdue">Terlambat</span></td>
+                            <td>-</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-edit" onclick="editKeuangan('3')"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete" onclick="deleteKeuangan('3')"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+        });
+
+        // Load data mahasiswa untuk dropdown
+        function loadMahasiswaData() {
+            console.log('Loading mahasiswa data...');
+            fetch('../api/mahasiswa_crud.php')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(result => {
+                    console.log('API Response:', result);
+                    
+                    if (result.status === 'success' && result.data) {
+                        const selectMahasiswa = document.getElementById('mahasiswa_id');
+                        selectMahasiswa.innerHTML = '<option value="">Pilih Mahasiswa</option>';
+                        
+                        result.data.forEach(mhs => {
+                            const statusText = mhs.status === 'aktif' ? 'Aktif' : 
+                                             mhs.status === 'cuti' ? 'Cuti' : 
+                                             mhs.status === 'lulus' ? 'Lulus' : 'Nonaktif';
+                            
+                            selectMahasiswa.innerHTML += `
+                                <option value="${mhs.id}" data-nim="${mhs.nim}" data-nama="${mhs.nama_lengkap}" data-fakultas="${mhs.fakultas}" data-prodi="${mhs.program_studi}" data-angkatan="${mhs.angkatan}" data-status="${mhs.status}">
+                                    ${mhs.nim} - ${mhs.nama_lengkap} (${mhs.fakultas} - ${mhs.program_studi} - Angkatan ${mhs.angkatan} - ${statusText})
+                                </option>
+                            `;
+                        });
+                        
+                        console.log(`Loaded ${result.data.length} mahasiswa`);
+                        
+                        // Tambahkan event listener untuk menampilkan info mahasiswa
+                        selectMahasiswa.addEventListener('change', function() {
+                            const selectedOption = this.options[this.selectedIndex];
+                            if (selectedOption.value) {
+                                const nim = selectedOption.dataset.nim;
+                                const nama = selectedOption.dataset.nama;
+                                const fakultas = selectedOption.dataset.fakultas;
+                                const prodi = selectedOption.dataset.prodi;
+                                const angkatan = selectedOption.dataset.angkatan;
+                                const status = selectedOption.dataset.status;
+                                
+                                console.log(`Mahasiswa dipilih: ${nim} - ${nama} (${fakultas} - ${prodi} - Angkatan ${angkatan} - ${status})`);
+                            }
+                        });
+                    } else {
+                        console.error('API returned error:', result.message);
+                        loadFallbackData();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading mahasiswa data:', error);
+                    loadFallbackData();
+                });
+        }
+        
+        // Fungsi untuk memuat data fallback
+        function loadFallbackData() {
+            console.log('Loading fallback data...');
+            const selectMahasiswa = document.getElementById('mahasiswa_id');
+            selectMahasiswa.innerHTML = `
+                <option value="">Pilih Mahasiswa</option>
+                <option value="1" data-nim="2024001" data-nama="Ahmad Fadillah" data-fakultas="Fakultas Teknik" data-prodi="Teknik Informatika" data-angkatan="2024" data-status="aktif">2024001 - Ahmad Fadillah (Fakultas Teknik - Teknik Informatika - Angkatan 2024 - Aktif)</option>
+                <option value="2" data-nim="2024002" data-nama="Sarah Putri" data-fakultas="Fakultas Ekonomi" data-prodi="Manajemen" data-angkatan="2024" data-status="aktif">2024002 - Sarah Putri (Fakultas Ekonomi - Manajemen - Angkatan 2024 - Aktif)</option>
+                <option value="3" data-nim="2023001" data-nama="Budi Santoso" data-fakultas="Fakultas Hukum" data-prodi="Ilmu Hukum" data-angkatan="2023" data-status="cuti">2023001 - Budi Santoso (Fakultas Hukum - Ilmu Hukum - Angkatan 2023 - Cuti)</option>
+                <option value="4" data-nim="2022001" data-nama="Dewi Sartika" data-fakultas="Fakultas Kedokteran" data-prodi="Pendidikan Dokter" data-angkatan="2022" data-status="lulus">2022001 - Dewi Sartika (Fakultas Kedokteran - Pendidikan Dokter - Angkatan 2022 - Lulus)</option>
+                <option value="5" data-nim="2024003" data-nama="Rizki Pratama" data-fakultas="Fakultas MIPA" data-prodi="Matematika" data-angkatan="2024" data-status="aktif">2024003 - Rizki Pratama (Fakultas MIPA - Matematika - Angkatan 2024 - Aktif)</option>
+                <option value="6" data-nim="2024004" data-nama="Nina Safitri" data-fakultas="Fakultas Teknik" data-prodi="Teknik Mesin" data-angkatan="2024" data-status="aktif">2024004 - Nina Safitri (Fakultas Teknik - Teknik Mesin - Angkatan 2024 - Aktif)</option>
+                <option value="7" data-nim="2024005" data-nama="Doni Kusuma" data-fakultas="Fakultas Ekonomi" data-prodi="Akuntansi" data-angkatan="2024" data-status="aktif">2024005 - Doni Kusuma (Fakultas Ekonomi - Akuntansi - Angkatan 2024 - Aktif)</option>
+                <option value="8" data-nim="2023002" data-nama="Maya Indah" data-fakultas="Fakultas Sastra" data-prodi="Sastra Indonesia" data-angkatan="2023" data-status="aktif">2023002 - Maya Indah (Fakultas Sastra - Sastra Indonesia - Angkatan 2023 - Aktif)</option>
+                <option value="9" data-nim="2023003" data-nama="Hendra Wijaya" data-fakultas="Fakultas Teknik" data-prodi="Teknik Informatika" data-angkatan="2023" data-status="aktif">2023003 - Hendra Wijaya (Fakultas Teknik - Teknik Informatika - Angkatan 2023 - Aktif)</option>
+                <option value="10" data-nim="2022002" data-nama="Siti Aisyah" data-fakultas="Fakultas Kedokteran" data-prodi="Pendidikan Dokter" data-angkatan="2022" data-status="aktif">2022002 - Siti Aisyah (Fakultas Kedokteran - Pendidikan Dokter - Angkatan 2022 - Aktif)</option>
+                <option value="11" data-nim="2024006" data-nama="Aditya Nugraha" data-fakultas="Fakultas MIPA" data-prodi="Matematika" data-angkatan="2024" data-status="aktif">2024006 - Aditya Nugraha (Fakultas MIPA - Matematika - Angkatan 2024 - Aktif)</option>
+                <option value="12" data-nim="2024007" data-nama="Putri Wulandari" data-fakultas="Fakultas Ekonomi" data-prodi="Manajemen" data-angkatan="2024" data-status="aktif">2024007 - Putri Wulandari (Fakultas Ekonomi - Manajemen - Angkatan 2024 - Aktif)</option>
+                <option value="13" data-nim="2023004" data-nama="Bambang Setiawan" data-fakultas="Fakultas Hukum" data-prodi="Ilmu Hukum" data-angkatan="2023" data-status="aktif">2023004 - Bambang Setiawan (Fakultas Hukum - Ilmu Hukum - Angkatan 2023 - Aktif)</option>
+                <option value="14" data-nim="2024008" data-nama="Ratna Sari" data-fakultas="Fakultas Teknik" data-prodi="Teknik Mesin" data-angkatan="2024" data-status="aktif">2024008 - Ratna Sari (Fakultas Teknik - Teknik Mesin - Angkatan 2024 - Aktif)</option>
+                <option value="15" data-nim="2024009" data-nama="Eko Prasetyo" data-fakultas="Fakultas MIPA" data-prodi="Matematika" data-angkatan="2024" data-status="aktif">2024009 - Eko Prasetyo (Fakultas MIPA - Matematika - Angkatan 2024 - Aktif)</option>
+                <option value="16" data-nim="2024010" data-nama="Diana Permata" data-fakultas="Fakultas Sastra" data-prodi="Sastra Indonesia" data-angkatan="2024" data-status="aktif">2024010 - Diana Permata (Fakultas Sastra - Sastra Indonesia - Angkatan 2024 - Aktif)</option>
+            `;
+            console.log('Fallback data loaded');
+        }
+
+        function deleteKeuangan(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data keuangan ini?')) {
+                alert('Data keuangan berhasil dihapus (simulasi)');
+                // Reload data atau hapus row dari DOM
+            }
+        }
+
+        // Sidebar alert untuk menu yang belum tersedia
+        Array.from(document.querySelectorAll('.sidebar-link')).forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                if (link.getAttribute('href').includes('redirect.html')) {
+                    e.preventDefault();
+                    alert('Halaman ' + link.dataset.menu + ' belum tersedia.');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

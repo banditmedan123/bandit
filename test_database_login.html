@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .user-table th, .user-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .user-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .test-section {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Database Login</h1>
+        <p>Halaman ini untuk menguji bahwa login hanya bisa dilakukan dengan data dari database yang sudah diinput.</p>
+    </div>
+
+    <div class="container">
+        <h2>1. Cek Database Users</h2>
+        <p>Periksa apakah data user di database sudah benar:</p>
+        <button onclick="checkDatabaseUsers()">Cek Database Users</button>
+        <div id="dbResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container">
+        <h2>2. Test Login dengan Data Database</h2>
+        <p>Test login dengan user yang ada di database:</p>
+        
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Masukkan username dari database">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Masukkan password">
+        </div>
+        
+        <button onclick="testDatabaseLogin()">Test Login Database</button>
+        <button onclick="testInvalidLogin()">Test Login Invalid</button>
+        <button onclick="checkLoginStatus()">Check Login Status</button>
+        <button onclick="logout()">Logout</button>
+        
+        <div id="loginResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container">
+        <h2>3. Test Login dengan Data Invalid</h2>
+        <p>Test login dengan data yang tidak ada di database untuk memastikan sistem menolak login:</p>
+        
+        <div class="test-section">
+            <h3>Test Case 1: Username tidak ada di database</h3>
+            <button onclick="testInvalidUsername()">Test Username: invaliduser</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Case 2: Password salah</h3>
+            <button onclick="testWrongPassword()">Test Password salah</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Case 3: Username dan password kosong</h3>
+            <button onclick="testEmptyCredentials()">Test Empty Credentials</button>
+        </div>
+        
+        <div id="testResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container">
+        <h2>4. Informasi Database</h2>
+        <p>Berikut adalah informasi tentang data user yang ada di database:</p>
+        <div id="dbInfo" class="result info" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function checkDatabaseUsers() {
+            try {
+                const response = await fetch('api/check_database_users.php');
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('dbResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.status === 'success' ? 'success' : result.status === 'warning' ? 'warning' : 'error');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                
+                // Tampilkan info database
+                if (result.status === 'success') {
+                    displayDatabaseInfo(result);
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('dbResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        function displayDatabaseInfo(data) {
+            const infoDiv = document.getElementById('dbInfo');
+            infoDiv.style.display = 'block';
+            
+            let info = `Status: ${data.status}\n`;
+            info += `Message: ${data.message}\n`;
+            info += `Password Info: ${data.password_info}\n`;
+            info += `Total Users: ${data.total_users}\n\n`;
+            
+            if (data.users && data.users.length > 0) {
+                info += 'Users in Database:\n';
+                data.users.forEach((user, index) => {
+                    info += `${index + 1}. Username: ${user.username}, Role: ${user.role}, Name: ${user.full_name}\n`;
+                });
+            }
+            
+            infoDiv.textContent = info;
+        }
+
+        async function testDatabaseLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Username dan password harus diisi!');
+                return;
+            }
+            
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('loginResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('loginResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testInvalidLogin() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: 'invaliduser',
+                        password: 'invalidpass'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                resultDiv.textContent = 'Test Invalid Login:\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testInvalidUsername() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: 'invaliduser',
+                        password: 'password'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                resultDiv.textContent = 'Test Invalid Username:\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testWrongPassword() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: 'admin',
+                        password: 'wrongpassword'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                resultDiv.textContent = 'Test Wrong Password:\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testEmptyCredentials() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: '',
+                        password: ''
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                resultDiv.textContent = 'Test Empty Credentials:\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'check'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('loginResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'info');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('loginResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('loginResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                const resultDiv = document.getElementById('loginResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Auto check database users on page load
+        window.addEventListener('load', function() {
+            checkDatabaseUsers();
+        });
+    </script>
+</body>
+</html> 

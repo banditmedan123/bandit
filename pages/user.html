@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data User - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a href="mahasiswa.html" class="nav-link"><i class="fas fa-users"></i><span>Data Mahasiswa</span></a></li>
+                <li class="nav-item"><a href="fakultas.html" class="nav-link"><i class="fas fa-university"></i><span>Data Fakultas</span></a></li>
+                <li class="nav-item"><a href="prodi.html" class="nav-link"><i class="fas fa-layer-group"></i><span>Data Program Studi</span></a></li>
+                <li class="nav-item"><a href="matakuliah.html" class="nav-link"><i class="fas fa-book"></i><span>Data Mata Kuliah</span></a></li>
+                <li class="nav-item"><a href="dosen.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i><span>Data Dosen</span></a></li>
+                <li class="nav-item active"><a href="user.html" class="nav-link"><i class="fas fa-user-shield"></i><span>Data User</span></a></li>
+                <li class="nav-item"><a href="krs.html" class="nav-link"><i class="fas fa-clipboard-list"></i><span>KRS</span></a></li>
+                <li class="nav-item"><a href="khs.html" class="nav-link"><i class="fas fa-chart-line"></i><span>KHS</span></a></li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Data User</h1>
+                </div>
+                <div class="header-right">
+                    <!-- User profile dihapus -->
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label for="roleFilter">Filter Role</label>
+                        <select id="roleFilter">
+                            <option value="">Semua Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="dosen">Dosen</option>
+                            <option value="mahasiswa">Mahasiswa</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter">Filter Status</label>
+                        <select id="statusFilter">
+                            <option value="">Semua Status</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Daftar User</h3>
+                        <div class="table-actions">
+                            <button class="btn-add" onclick="openAddUserModal()">
+                                <i class="fas fa-plus"></i>
+                                Tambah User
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Tanggal Dibuat</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button class="page-btn">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddUserModal()">&times;</span>
+            <h2>Tambah User Baru</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label for="nimMahasiswa">NIM Mahasiswa (Opsional)</label>
+                    <select id="nimMahasiswa" name="nimMahasiswa">
+                        <option value="">Pilih NIM Mahasiswa</option>
+                    </select>
+                    <small style="color: #666;">Pilih NIM untuk mengisi otomatis username, nama, dan email</small>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" maxlength="50" required>
+                    <small style="color: #666;">Maksimal 50 karakter, harus unik</small>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" maxlength="100" required>
+                    <small style="color: #666;">Maksimal 100 karakter, harus unik</small>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" minlength="6" required>
+                    <small style="color: #666;">Minimal 6 karakter</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Konfirmasi Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" minlength="6" required>
+                    <small style="color: #666;">Harus sama dengan password</small>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role *</label>
+                    <select id="role" name="role" required>
+                        <option value="">Pilih Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="dosen">Dosen</option>
+                        <option value="mahasiswa">Mahasiswa</option>
+                    </select>
+                </div>
+                <!-- Note: Status field removed as it's not available in current database structure -->
+                <div class="form-group">
+                    <label for="fullName">Nama Lengkap *</label>
+                    <input type="text" id="fullName" name="fullName" maxlength="100" required>
+                    <small style="color: #666;">Maksimal 100 karakter</small>
+                </div>
+                <!-- Note: Phone field removed as it's not available in current database structure -->
+                <button type="submit">Tambah User</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditUserModal()">&times;</span>
+            <h2>Edit User</h2>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId" name="userId">
+                <div class="form-group">
+                    <label for="editUsername">Username</label>
+                    <input type="text" id="editUsername" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="editRole">Role</label>
+                    <select id="editRole" name="role" required>
+                        <option value="">Pilih Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="dosen">Dosen</option>
+                        <option value="mahasiswa">Mahasiswa</option>
+                    </select>
+                </div>
+                <!-- Note: Status field removed as it's not available in current database structure -->
+                <div class="form-group">
+                    <label for="editFullName">Nama Lengkap</label>
+                    <input type="text" id="editFullName" name="fullName" required>
+                </div>
+                <!-- Note: Phone field removed as it's not available in current database structure -->
+                <button type="submit">Update User</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load users from API
+        let users = [];
+
+        // Load users on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsersFromAPI();
+        });
+
+        function loadUsersFromAPI() {
+            fetch('../api/user.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        users = data.data;
+                        loadUsers();
+                    } else {
+                        console.error('Error loading users:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function loadUsers() {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge status-${user.role}">${user.role}</span></td>
+                    <td>${user.full_name}</td>
+                    <td>${user.created_at}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="editUser(${user.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function openAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'flex';
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+            document.getElementById('addUserForm').reset();
+        }
+
+        function openEditUserModal() {
+            document.getElementById('editUserModal').style.display = 'flex';
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+            document.getElementById('editUserForm').reset();
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editUsername').value = user.username;
+                document.getElementById('editEmail').value = user.email;
+                document.getElementById('editRole').value = user.role;
+                document.getElementById('editFullName').value = user.full_name;
+                openEditUserModal();
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
+                fetch('../api/user.php', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('User berhasil dihapus!');
+                        loadUsersFromAPI(); // Reload data dari API
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus user!');
+                });
+            }
+        }
+
+        // Form submission handlers
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Validasi field yang diperlukan
+            const requiredFields = ['username', 'email', 'password', 'confirmPassword', 'role', 'fullName'];
+            for (let field of requiredFields) {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    alert(`Field ${field} harus diisi!`);
+                    return;
+                }
+            }
+            
+            // Validasi panjang username (max 50 karakter)
+            const username = formData.get('username').trim();
+            if (username.length > 50) {
+                alert('Username maksimal 50 karakter!');
+                return;
+            }
+            
+            // Validasi panjang email (max 100 karakter)
+            const email = formData.get('email').trim();
+            if (email.length > 100) {
+                alert('Email maksimal 100 karakter!');
+                return;
+            }
+            
+            // Validasi format email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Format email tidak valid!');
+                return;
+            }
+            
+            // Validasi password
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            
+            if (password !== confirmPassword) {
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password minimal 6 karakter!');
+                return;
+            }
+            
+            // Validasi panjang nama lengkap (max 100 karakter)
+            const fullName = formData.get('fullName').trim();
+            if (fullName.length > 100) {
+                alert('Nama lengkap maksimal 100 karakter!');
+                return;
+            }
+            
+            // Validasi panjang nomor telepon (max 20 karakter)
+            const phone = formData.get('phone') ? formData.get('phone').trim() : '';
+            if (phone && phone.length > 20) {
+                alert('Nomor telepon maksimal 20 karakter!');
+                return;
+            }
+            
+            // Validasi role
+            const role = formData.get('role');
+            const validRoles = ['admin', 'dosen', 'mahasiswa'];
+            if (!validRoles.includes(role)) {
+                alert('Role tidak valid!');
+                return;
+            }
+            
+            // Note: Status field is not available in current database structure
+            // const status = formData.get('status');
+            // const validStatuses = ['aktif', 'nonaktif'];
+            // if (!validStatuses.includes(status)) {
+            //     alert('Status tidak valid!');
+            //     return;
+            // }
+            
+            const userData = {
+                username: username,
+                email: email,
+                password: password,
+                role: role,
+                full_name: fullName
+            };
+            
+            console.log('Sending user data:', userData);
+            
+            // Kirim data ke API
+            fetch('../api/user.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('API Response:', data);
+                if (data.status === 'success') {
+                    alert('User berhasil ditambahkan!');
+                    closeAddUserModal();
+                    loadUsersFromAPI(); // Reload data dari API
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menambah user!');
+            });
+        });
+
+        document.getElementById('editUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const userId = parseInt(formData.get('userId'));
+            
+            const userData = {
+                id: userId,
+                username: formData.get('username'),
+                email: formData.get('email'),
+                role: formData.get('role'),
+                full_name: formData.get('fullName')
+            };
+            
+            // Kirim data ke API
+            fetch('../api/user.php', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('User berhasil diupdate!');
+                    closeEditUserModal();
+                    loadUsersFromAPI(); // Reload data dari API
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengupdate user!');
+            });
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#userTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Filter functionality
+        document.getElementById('roleFilter').addEventListener('change', function(e) {
+            filterUsers();
+        });
+
+        // Note: Status filter removed as status field is not available in current database structure
+        // document.getElementById('statusFilter').addEventListener('change', function(e) {
+        //     filterUsers();
+        // });
+
+        function filterUsers() {
+            const roleFilter = document.getElementById('roleFilter').value;
+            const rows = document.querySelectorAll('#userTableBody tr');
+            
+            rows.forEach(row => {
+                const role = row.children[3].textContent;
+                
+                const roleMatch = !roleFilter || role === roleFilter;
+                
+                row.style.display = roleMatch ? '' : 'none';
+            });
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const addModal = document.getElementById('addUserModal');
+            const editModal = document.getElementById('editUserModal');
+            
+            if (event.target === addModal) {
+                closeAddUserModal();
+            }
+            if (event.target === editModal) {
+                closeEditUserModal();
+            }
+        }
+
+        // Populate NIM Mahasiswa dropdown
+        let mahasiswaList = [];
+        fetch('../api/mahasiswa_crud.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    mahasiswaList = data.data;
+                    const nimSelect = document.getElementById('nimMahasiswa');
+                    data.data.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m.nim;
+                        opt.textContent = m.nim + ' - ' + m.nama_lengkap;
+                        nimSelect.appendChild(opt);
+                    });
+                }
+            });
+
+        document.getElementById('nimMahasiswa').addEventListener('change', function() {
+            const nim = this.value;
+            const mhs = mahasiswaList.find(m => m.nim === nim);
+            if (mhs) {
+                document.getElementById('username').value = mhs.nim;
+                document.getElementById('fullName').value = mhs.nama_lengkap;
+                document.getElementById('email').value = mhs.email;
+            } else {
+                document.getElementById('username').value = '';
+                document.getElementById('fullName').value = '';
+                document.getElementById('email').value = '';
+            }
+        });
+    </script>
+</body>
+</html> 

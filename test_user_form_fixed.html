@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test User Form Fixed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], input[type="password"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test User Form Fixed</h1>
+        <p>Halaman ini untuk menguji form tambah user yang sudah diperbaiki</p>
+        
+        <div class="note">
+            <strong>Perubahan yang dilakukan:</strong><br>
+            - Menghapus field 'status' dan 'phone' yang tidak ada di database<br>
+            - Hanya menggunakan kolom: username, email, password, role, full_name<br>
+            - Memperbaiki API user.php agar tidak mencoba menyimpan kolom yang tidak ada
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Test Add User</h2>
+        <form id="testUserForm">
+            <div class="form-group">
+                <label for="username">Username *</label>
+                <input type="text" id="username" name="username" required maxlength="50">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required maxlength="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Role *</label>
+                <select id="role" name="role" required>
+                    <option value="">Pilih Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="dosen">Dosen</option>
+                    <option value="mahasiswa">Mahasiswa</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fullName">Nama Lengkap *</label>
+                <input type="text" id="fullName" name="fullName" required maxlength="100">
+            </div>
+            
+            <button type="submit">Test Add User</button>
+            <button type="button" onclick="testGetUsers()">Test Get Users</button>
+        </form>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container">
+        <h2>Sample Data untuk Test</h2>
+        <p>Gunakan data berikut untuk testing:</p>
+        <ul>
+            <li><strong>Username:</strong> testuser1</li>
+            <li><strong>Email:</strong> testuser1@example.com</li>
+            <li><strong>Password:</strong> password123</li>
+            <li><strong>Role:</strong> mahasiswa</li>
+            <li><strong>Nama Lengkap:</strong> Test User One</li>
+        </ul>
+        
+        <button onclick="fillSampleData()">Fill Sample Data</button>
+    </div>
+
+    <script>
+        document.getElementById('testUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Validate required fields
+            const requiredFields = ['username', 'email', 'password', 'role', 'fullName'];
+            for (let field of requiredFields) {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    showResult(`Error: Field ${field} harus diisi!`, 'error');
+                    return;
+                }
+            }
+            
+            // Validate email format
+            const email = formData.get('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showResult('Error: Format email tidak valid!', 'error');
+                return;
+            }
+            
+            // Validate password length
+            const password = formData.get('password');
+            if (password.length < 6) {
+                showResult('Error: Password minimal 6 karakter!', 'error');
+                return;
+            }
+            
+            // Validate role
+            const role = formData.get('role');
+            const validRoles = ['admin', 'dosen', 'mahasiswa'];
+            if (!validRoles.includes(role)) {
+                showResult('Error: Role tidak valid!', 'error');
+                return;
+            }
+            
+            const userData = {
+                username: formData.get('username').trim(),
+                email: formData.get('email').trim(),
+                password: formData.get('password'),
+                role: formData.get('role'),
+                full_name: formData.get('fullName').trim()
+            };
+            
+            console.log('Sending user data:', userData);
+            
+            fetch('api/user.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('API Response:', data);
+                if (data.status === 'success') {
+                    showResult('SUCCESS!\n' + JSON.stringify(data, null, 2), 'success');
+                    document.getElementById('testUserForm').reset();
+                } else {
+                    showResult('FAILED!\n' + JSON.stringify(data, null, 2), 'error');
+                }
+            })
+            .catch(error => {
+                showResult('ERROR: ' + error.message, 'error');
+            });
+        });
+
+        function testGetUsers() {
+            fetch('api/user.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showResult('Users in Database:\n' + JSON.stringify(data.data, null, 2), 'info');
+                    } else {
+                        showResult('Error getting users:\n' + JSON.stringify(data, null, 2), 'error');
+                    }
+                })
+                .catch(error => {
+                    showResult('ERROR: ' + error.message, 'error');
+                });
+        }
+
+        function fillSampleData() {
+            document.getElementById('username').value = 'testuser1';
+            document.getElementById('email').value = 'testuser1@example.com';
+            document.getElementById('password').value = 'password123';
+            document.getElementById('role').value = 'mahasiswa';
+            document.getElementById('fullName').value = 'Test User One';
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = 'result ' + type;
+            resultDiv.style.display = 'block';
+        }
+
+        // Auto test get users on page load
+        window.addEventListener('load', function() {
+            testGetUsers();
+        });
+    </script>
+</body>
+</html> 

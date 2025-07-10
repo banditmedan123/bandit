@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHS Saya - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .khs-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .khs-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .khs-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+        }
+        .summary-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .summary-card h4 {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        .summary-card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .khs-table {
+            padding: 1.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        td {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        .nilai-a {color: #059669; font-weight: bold;}
+        .nilai-b {color: #0d9488; font-weight: bold;}
+        .nilai-c {color: #d97706; font-weight: bold;}
+        .nilai-d {color: #dc2626; font-weight: bold;}
+        .nilai-e {color: #991b1b; font-weight: bold;}
+        .semester-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="mahasiswa-dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-profil.html" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-krs.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>KRS Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="user-khs.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>KHS Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-jadwal.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Jadwal Kuliah</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-dokumen.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Dokumen</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../logout.php" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Keluar</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>KHS Saya</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <span class="user-name">Ahmad Fadillah</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="khs-container">
+                    <div class="khs-header">
+                        <h2>Kartu Hasil Studi (KHS)</h2>
+                    </div>
+                    
+                    <div class="khs-summary">
+                        <div class="summary-card">
+                            <h4>IPK</h4>
+                            <p>3.85</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Total SKS</h4>
+                            <p>24</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Semester Aktif</h4>
+                            <p>1</p>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Status</h4>
+                            <p>Aktif</p>
+                        </div>
+                    </div>
+
+                    <div class="khs-table">
+                        <div class="semester-filter">
+                            <button class="filter-btn active">Semester 1</button>
+                            <button class="filter-btn">Semester 2</button>
+                            <button class="filter-btn">Semester 3</button>
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode MK</th>
+                                    <th>Mata Kuliah</th>
+                                    <th>SKS</th>
+                                    <th>Nilai</th>
+                                    <th>Bobot</th>
+                                    <th>Semester</th>
+                                    <th>Tahun Akademik</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>IF101</td>
+                                    <td>Pemrograman Dasar</td>
+                                    <td>3</td>
+                                    <td class="nilai-a">A</td>
+                                    <td>4.0</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>IF102</td>
+                                    <td>Matematika Diskrit</td>
+                                    <td>3</td>
+                                    <td class="nilai-a">A</td>
+                                    <td>4.0</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>IF103</td>
+                                    <td>Algoritma & Struktur Data</td>
+                                    <td>4</td>
+                                    <td class="nilai-b">B+</td>
+                                    <td>3.3</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>IF104</td>
+                                    <td>Basis Data</td>
+                                    <td>3</td>
+                                    <td class="nilai-a">A-</td>
+                                    <td>3.7</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>IF105</td>
+                                    <td>Pemrograman Web</td>
+                                    <td>3</td>
+                                    <td class="nilai-a">A</td>
+                                    <td>4.0</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>IF106</td>
+                                    <td>Jaringan Komputer</td>
+                                    <td>3</td>
+                                    <td class="nilai-b">B</td>
+                                    <td>3.0</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>UM101</td>
+                                    <td>Pendidikan Pancasila</td>
+                                    <td>2</td>
+                                    <td class="nilai-a">A</td>
+                                    <td>4.0</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>UM102</td>
+                                    <td>Bahasa Indonesia</td>
+                                    <td>3</td>
+                                    <td class="nilai-a">A</td>
+                                    <td>4.0</td>
+                                    <td>Ganjil</td>
+                                    <td>2024/2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Filter semester functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+    <script src="../script.js"></script>
+</body>
+</html> 

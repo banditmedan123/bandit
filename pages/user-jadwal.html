@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Kuliah - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+        .schedule-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .schedule-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .day-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .day-tab {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        .day-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .schedule-list {
+            padding: 1rem;
+        }
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e2e8f0;
+            transition: background-color 0.3s ease;
+        }
+        .schedule-item:hover {
+            background: #f8fafc;
+        }
+        .schedule-time {
+            background: #f1f5f9;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 80px;
+        }
+        .schedule-time .time {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        .schedule-time .duration {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .schedule-info h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        .schedule-info p {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        .schedule-info .dosen {
+            font-size: 0.75rem;
+            color: #059669;
+            font-weight: 500;
+        }
+        .schedule-room {
+            margin-left: auto;
+            text-align: right;
+        }
+        .room-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:70px;display:block;margin:0 auto 10px auto;">
+                <h2>SIOM</h2>
+                <p>Sistem Informasi Mahasiswa</p>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="mahasiswa-dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-profil.html" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-krs.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>KRS Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-khs.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>KHS Saya</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="user-jadwal.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Jadwal Kuliah</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-dokumen.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Dokumen</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../logout.php" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Keluar</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Jadwal Kuliah</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <span class="user-name">Ahmad Fadillah</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="schedule-container">
+                    <div class="schedule-header">
+                        <h2>Jadwal Kuliah Semester 1</h2>
+                        <div>
+                            <span style="color: #64748b; font-size: 0.875rem;">Semester Ganjil 2024/2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="day-tabs">
+                        <div class="day-tab active">Senin</div>
+                        <div class="day-tab">Selasa</div>
+                        <div class="day-tab">Rabu</div>
+                        <div class="day-tab">Kamis</div>
+                        <div class="day-tab">Jumat</div>
+                        <div class="day-tab">Sabtu</div>
+                    </div>
+
+                    <div class="schedule-list">
+                        <div class="schedule-item">
+                            <div class="schedule-time">
+                                <div class="time">08:00</div>
+                                <div class="duration">90 menit</div>
+                            </div>
+                            <div class="schedule-info">
+                                <h4>Pemrograman Dasar</h4>
+                                <p>IF101 - 3 SKS</p>
+                                <div class="dosen">Dr. Budi Santoso</div>
+                            </div>
+                            <div class="schedule-room">
+                                <div class="room-badge">Lab 1</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="schedule-time">
+                                <div class="time">10:30</div>
+                                <div class="duration">90 menit</div>
+                            </div>
+                            <div class="schedule-info">
+                                <h4>Matematika Diskrit</h4>
+                                <p>IF102 - 3 SKS</p>
+                                <div class="dosen">Dr. Sarah Putri</div>
+                            </div>
+                            <div class="schedule-room">
+                                <div class="room-badge">Ruang 201</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="schedule-time">
+                                <div class="time">13:00</div>
+                                <div class="duration">120 menit</div>
+                            </div>
+                            <div class="schedule-info">
+                                <h4>Algoritma & Struktur Data</h4>
+                                <p>IF103 - 4 SKS</p>
+                                <div class="dosen">Dr. Rizki Pratama</div>
+                            </div>
+                            <div class="schedule-room">
+                                <div class="room-badge">Ruang 301</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="schedule-time">
+                                <div class="time">15:30</div>
+                                <div class="duration">90 menit</div>
+                            </div>
+                            <div class="schedule-info">
+                                <h4>Basis Data</h4>
+                                <p>IF104 - 3 SKS</p>
+                                <div class="dosen">Dr. Ahmad Fauzi</div>
+                            </div>
+                            <div class="schedule-room">
+                                <div class="room-badge">Lab 2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Day tab functionality
+        document.querySelectorAll('.day-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+    <script src="../script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile API - SIOM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .result {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Profile API</h1>
+    
+    <div class="test-section">
+        <h2>Test API get_user_profile.php</h2>
+        <button onclick="testProfileAPI()">Test Profile API</button>
+        <div id="profileResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test API get_mahasiswa_by_username.php</h2>
+        <button onclick="testMahasiswaAPI()">Test Mahasiswa API</button>
+        <div id="mahasiswaResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Session Data</h2>
+        <button onclick="testSession()">Test Session</button>
+        <div id="sessionResult" class="result"></div>
+    </div>
+
+    <script>
+        function testProfileAPI() {
+            const resultDiv = document.getElementById('profileResult');
+            resultDiv.textContent = 'Testing...';
+            
+            fetch('../api/get_user_profile.php')
+                .then(response => {
+                    resultDiv.textContent = `HTTP Status: ${response.status}\n`;
+                    return response.json();
+                })
+                .then(data => {
+                    resultDiv.textContent += `Response: ${JSON.stringify(data, null, 2)}`;
+                    if (data.status === 'success') {
+                        resultDiv.className = 'result success';
+                    } else {
+                        resultDiv.className = 'result error';
+                    }
+                })
+                .catch(error => {
+                    resultDiv.textContent += `Error: ${error.message}`;
+                    resultDiv.className = 'result error';
+                });
+        }
+        
+        function testMahasiswaAPI() {
+            const resultDiv = document.getElementById('mahasiswaResult');
+            resultDiv.textContent = 'Testing...';
+            
+            fetch('../api/get_mahasiswa_by_username.php')
+                .then(response => {
+                    resultDiv.textContent = `HTTP Status: ${response.status}\n`;
+                    return response.json();
+                })
+                .then(data => {
+                    resultDiv.textContent += `Response: ${JSON.stringify(data, null, 2)}`;
+                    if (data.status === 'success') {
+                        resultDiv.className = 'result success';
+                    } else {
+                        resultDiv.className = 'result error';
+                    }
+                })
+                .catch(error => {
+                    resultDiv.textContent += `Error: ${error.message}`;
+                    resultDiv.className = 'result error';
+                });
+        }
+        
+        function testSession() {
+            const resultDiv = document.getElementById('sessionResult');
+            resultDiv.textContent = 'Testing session...';
+            
+            // Cek apakah user sudah login
+            fetch('../api/auth.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'check'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.textContent = `Session Check: ${JSON.stringify(data, null, 2)}`;
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.className = 'result error';
+                }
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            });
+        }
+    </script>
+</body>
+</html> 

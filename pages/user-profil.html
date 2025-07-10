@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil User - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-info h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .profile-info p {
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .role-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .section-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #64748b;
+            min-width: 150px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1e293b;
+            text-align: right;
+        }
+
+        .edit-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .edit-button:hover {
+            background: #2563eb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+
+        @media (max-width: 768px) {
+            .profile-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="mahasiswa-dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="user-krs.html"><i class="fas fa-book"></i> KRS</a></li>
+                    <li><a href="user-khs.html"><i class="fas fa-graduation-cap"></i> KHS</a></li>
+                    <li><a href="user-jadwal.html"><i class="fas fa-calendar"></i> Jadwal</a></li>
+                    <li><a href="user-dokumen.html"><i class="fas fa-file"></i> Dokumen</a></li>
+                    <li><a href="user-profil.html" class="active"><i class="fas fa-user"></i> Profil</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="handleLogout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-content">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h1 id="profileName">Loading...</h1>
+                            <p id="profileUsername">Username: Loading...</p>
+                            <p id="profileEmail">Email: Loading...</p>
+                            <div class="role-badge" id="profileRole">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-grid">
+                    <!-- Informasi Umum -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3>Informasi Umum</h3>
+                        </div>
+                        <div class="section-content">
+                            <div class="info-item">
+                                <span class="info-label">Username</span>
+                                <span class="info-value" id="generalUsername">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Nama Lengkap</span>
+                                <span class="info-value" id="generalFullName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email</span>
+                                <span class="info-value" id="generalEmail">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Role</span>
+                                <span class="info-value" id="generalRole">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Tanggal Registrasi</span>
+                                <span class="info-value" id="generalCreatedAt">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informasi Spesifik Role -->
+                    <div class="profile-section">
+                        <div class="section-header">
+                            <h3 id="roleSpecificTitle">Informasi Spesifik</h3>
+                        </div>
+                        <div class="section-content" id="roleSpecificContent">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Memuat data...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load profile data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            fetch('../api/get_user_profile.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateProfile(data.data);
+                    } else {
+                        console.error('Error loading profile:', data.message);
+                        showError('Gagal memuat data profil: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data profil');
+                });
+        }
+
+        function updateProfile(data) {
+            const user = data.user;
+            const roleData = data.role_specific_data;
+
+            // Update header profile
+            document.getElementById('profileName').textContent = user.full_name || 'Nama tidak tersedia';
+            document.getElementById('profileUsername').textContent = `Username: ${user.username}`;
+            document.getElementById('profileEmail').textContent = `Email: ${user.email || 'Tidak tersedia'}`;
+            document.getElementById('profileRole').textContent = user.role.toUpperCase();
+
+            // Update general information
+            document.getElementById('generalUsername').textContent = user.username;
+            document.getElementById('generalFullName').textContent = user.full_name || 'Tidak tersedia';
+            document.getElementById('generalEmail').textContent = user.email || 'Tidak tersedia';
+            document.getElementById('generalRole').textContent = user.role.toUpperCase();
+            document.getElementById('generalCreatedAt').textContent = formatDate(user.created_at);
+
+            // Update role-specific information
+            updateRoleSpecificInfo(user.role, roleData);
+
+            // Update top bar user name
+            document.getElementById('userName').textContent = user.full_name || user.username;
+        }
+
+        function updateRoleSpecificInfo(role, roleData) {
+            const titleElement = document.getElementById('roleSpecificTitle');
+            const contentElement = document.getElementById('roleSpecificContent');
+
+            if (role === 'mahasiswa' && roleData) {
+                titleElement.textContent = 'Informasi Akademik';
+                contentElement.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">NIM</span>
+                        <span class="info-value">${roleData.nim || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Fakultas</span>
+                        <span class="info-value">${roleData.nama_fakultas || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Program Studi</span>
+                        <span class="info-value">${roleData.nama_prodi || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Angkatan</span>
+                        <span class="info-value">${roleData.angkatan || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">${roleData.status || 'Aktif'}</span>
+                    </div>
+                `;
+            } else if (role === 'dosen' && roleData) {
+                titleElement.textContent = 'Informasi Dosen';
+                contentElement.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">NIDN</span>
+                        <span class="info-value">${roleData.nidn || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Nama Dosen</span>
+                        <span class="info-value">${roleData.nama_dosen || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Fakultas</span>
+                        <span class="info-value">${roleData.nama_fakultas || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">${roleData.email || '-'}</span>
+                    </div>
+                `;
+            } else {
+                titleElement.textContent = 'Informasi Spesifik';
+                contentElement.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">Tidak ada data spesifik</span>
+                    </div>
+                `;
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Tidak tersedia';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function showError(message) {
+            const container = document.querySelector('.profile-container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i>
+                ${message}
+            `;
+            container.insertBefore(errorDiv, container.firstChild);
+        }
+
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                fetch('../api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '../login.html';
+                    } else {
+                        alert('Error saat logout: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        }
+
+        // Sidebar toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html> 

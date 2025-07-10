@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Optimalisasi Pengelolaan Data Mahasiswa</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+        
+        /* Stats Grid - mengubah dari stat-card ke summary-card style */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 1.2rem 1rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FDD017 0%, #FFD700 100%);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(253, 208, 23, 0.2);
+            border-color: #FDD017;
+        }
+        
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FDD017 0%, #FFD700 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.6rem auto;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(253, 208, 23, 0.3);
+        }
+        
+        .stat-info h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem !important;
+            font-weight: 800 !important;
+            background: linear-gradient(135deg, #1e293b 0%, #FDD017 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-change {
+            color: #64748b;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Special styling for each card */
+        .stat-card:nth-child(1) {
+            background: linear-gradient(135deg, #ffffff 0%, #fef7e0 100%);
+        }
+        
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #FFD700 100%);
+        }
+        
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+        }
+        
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #3b82f6 100%);
+        }
+        
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        }
+        
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #22c55e 100%);
+        }
+        
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 100%);
+        }
+        
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #FDD017 0%, #f59e0b 100%);
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/mahasiswa.html" class="nav-link" id="sidebarMahasiswa">
+                        <i class="fas fa-users"></i>
+                        <span>Data Mahasiswa</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/fakultas.html" class="nav-link">
+                        <i class="fas fa-university"></i>
+                        <span>Data Fakultas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/prodi.html" class="nav-link">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Data Program Studi</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/matakuliah.html" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Data Mata Kuliah</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/dosen.html" class="nav-link">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Data Dosen</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/user.html" class="nav-link">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Data User</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/krs.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>KRS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/khs.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>KHS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Dashboard Utama</h1>
+                </div>
+                <div class="header-right">
+                    <!-- Logout button dihapus -->
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Mahasiswa</h3>
+                            <p class="stat-number" id="totalMahasiswa">Loading...</p>
+                            <span class="stat-change positive">Data dari database</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Dosen</h3>
+                            <p class="stat-number" id="totalDosen">Loading...</p>
+                            <span class="stat-change positive">Data dari database</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Fakultas</h3>
+                            <p class="stat-number" id="totalFakultas">Loading...</p>
+                            <span class="stat-change positive">Data dari database</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Program Studi</h3>
+                            <p class="stat-number" id="totalProdi">Loading...</p>
+                            <span class="stat-change positive">Data dari database</span>
+                        </div>
+                    </div>
+                    
+
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Statistik Mahasiswa per Fakultas</h3>
+                            <div class="chart-actions">
+                                <button class="btn-secondary">Export</button>
+                                <button class="btn-primary">Detail</button>
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="facultyChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Aktivitas Terbaru</h3>
+                            <a href="#" class="view-all">Lihat Semua</a>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Mahasiswa Baru Terdaftar</h4>
+                                    <p>Ahmad Fadillah telah mendaftar di Fakultas Teknik</p>
+                                    <span class="activity-time">2 jam yang lalu</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Laporan Keuangan Diperbarui</h4>
+                                    <p>Laporan keuangan semester genap 2024 telah diperbarui</p>
+                                    <span class="activity-time">4 jam yang lalu</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Wisuda Mahasiswa</h4>
+                                    <p>Sarah Putri telah menyelesaikan studi di Fakultas Ekonomi</p>
+                                    <span class="activity-time">1 hari yang lalu</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bottom-section">
+                    <div class="quick-actions">
+                        <div class="section-header">
+                            <h3>Aksi Cepat</h3>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Tambah Mahasiswa</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-file-export"></i>
+                                <span>Export Data</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Generate Laporan</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-bell"></i>
+                                <span>Notifikasi</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Check login status on page load
+        window.addEventListener('load', function() {
+            checkLoginStatus();
+            loadDashboardStats();
+        });
+
+        function checkLoginStatus() {
+            fetch('api/auth.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'check'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    // User not logged in, redirect to login
+                    if (window.location.pathname !== '/login.html' && !window.location.pathname.includes('login.html')) {
+                        window.location.href = 'login.html';
+                    }
+                } else if (data.user.role !== 'admin') {
+                    // User is not admin, redirect based on role
+                    if (data.user.role === 'mahasiswa') {
+                        if (!window.location.pathname.includes('mahasiswa-dashboard.html')) {
+                            window.location.href = 'pages/mahasiswa-dashboard.html';
+                        }
+                    } else {
+                        if (window.location.pathname !== '/login.html' && !window.location.pathname.includes('login.html')) {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                } else {
+                    // User is admin, update user name if element exists
+                    const userNameElement = document.getElementById('userName');
+                    if (userNameElement) {
+                        userNameElement.textContent = data.user.nama_lengkap;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error checking login status:', error);
+                // Hanya redirect jika bukan di halaman login
+                if (window.location.pathname !== '/login.html' && !window.location.pathname.includes('login.html')) {
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        // Load dashboard statistics
+        function loadDashboardStats() {
+            console.log('Loading dashboard stats...');
+            
+            // Load total mahasiswa
+            fetch('api/mahasiswa.php')
+                .then(response => {
+                    console.log('Mahasiswa API response:', response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Mahasiswa data:', data);
+                    if (data.status === 'success') {
+                        document.getElementById('totalMahasiswa').textContent = data.data.length;
+                    } else {
+                        document.getElementById('totalMahasiswa').textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading mahasiswa data:', error);
+                    document.getElementById('totalMahasiswa').textContent = '0';
+                });
+
+            // Load total dosen
+            fetch('api/dosen.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Dosen data:', data);
+                    if (data.status === 'success') {
+                        document.getElementById('totalDosen').textContent = data.data.length;
+                    } else {
+                        document.getElementById('totalDosen').textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading dosen data:', error);
+                    document.getElementById('totalDosen').textContent = '0';
+                });
+
+            // Load total fakultas
+            fetch('api/fakultas.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fakultas data:', data);
+                    if (data.status === 'success') {
+                        document.getElementById('totalFakultas').textContent = data.data.length;
+                    } else {
+                        document.getElementById('totalFakultas').textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading fakultas data:', error);
+                    document.getElementById('totalFakultas').textContent = '0';
+                });
+
+            // Load total prodi
+            fetch('api/prodi.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Prodi data:', data);
+                    if (data.status === 'success') {
+                        document.getElementById('totalProdi').textContent = data.data.length;
+                    } else {
+                        document.getElementById('totalProdi').textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading prodi data:', error);
+                    document.getElementById('totalProdi').textContent = '0';
+                });
+
+
+        }
+
+        // Hapus event click yang mencegah link berjalan pada Data Mahasiswa
+        // Pastikan hanya .sidebar-link (redirect.html) yang dicegah
+        Array.from(document.querySelectorAll('.sidebar-link')).forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                if (link.getAttribute('href').includes('redirect.html')) {
+                    e.preventDefault();
+                    alert('Halaman ' + link.dataset.menu + ' belum tersedia.');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

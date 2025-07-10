@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Mahasiswa</title>
+</head>
+<body>
+    <h1>Test API Mahasiswa</h1>
+    <button onclick="testAPI()">Test API Mahasiswa</button>
+    <button onclick="testDatabase()">Test Database Connection</button>
+    <div id="result"></div>
+
+    <script>
+        function testAPI() {
+            console.log('Testing API...');
+            fetch('api/mahasiswa.php')
+                .then(response => {
+                    console.log('Response:', response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data:', data);
+                    document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+                });
+        }
+
+        function testDatabase() {
+            console.log('Testing database...');
+            fetch('api/test_mahasiswa.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Database test:', data);
+                    document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+                });
+        }
+    </script>
+</body>
+</html> 

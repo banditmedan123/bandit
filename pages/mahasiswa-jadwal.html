@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Matakuliah - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .schedule-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .schedule-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .schedule-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-card h4 {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-card p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .schedule-content {
+            padding: 1.5rem;
+        }
+        
+        .day-schedule {
+            margin-bottom: 2rem;
+        }
+        
+        .day-header {
+            background: linear-gradient(135deg, #22CE83 0%, #16a085 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .schedule-list {
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.3s ease;
+        }
+        
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+        
+        .schedule-item:hover {
+            background: #f8fafc;
+        }
+        
+        .schedule-time {
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .schedule-time .time {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        
+        .schedule-time .duration {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        
+        .schedule-info-detail h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .schedule-info-detail p {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .schedule-info-detail .room {
+            font-size: 0.75rem;
+            color: #22CE83;
+            font-weight: 500;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc2626;
+            background: #fee2e2;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .today-indicator {
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> SIOM</h2>
+                <p>Mahasiswa</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="mahasiswa-dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="mahasiswa-profil.html" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil Mahasiswa</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="mahasiswa-krs.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>KRS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="mahasiswa-khs.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>KHS</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="mahasiswa-jadwal.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Jadwal Matakuliah</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Jadwal Matakuliah</h1>
+                </div>
+            </header>
+
+            <!-- Schedule Content -->
+            <div class="dashboard-content">
+                <!-- Loading Message -->
+                <div id="loadingMessage" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Memuat jadwal matakuliah...
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="error" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <span id="errorText">Terjadi kesalahan saat memuat data</span>
+                </div>
+
+                <!-- Schedule Container -->
+                <div id="scheduleContainer" class="schedule-container" style="display: none;">
+                    <div class="schedule-header">
+                        <h2>Jadwal Matakuliah</h2>
+                    </div>
+                    
+                    <div class="schedule-info">
+                        <div class="info-card">
+                            <h4>NIM</h4>
+                            <p id="studentNim">Loading...</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Nama</h4>
+                            <p id="studentName">Loading...</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Semester</h4>
+                            <p id="activeSemester">Loading...</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Program Studi</h4>
+                            <p id="programStudi">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="schedule-content">
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i class="fas fa-calendar"></i>
+                            <h3>Belum ada jadwal matakuliah</h3>
+                            <p>Jadwal akan muncul setelah mendaftar mata kuliah di KRS</p>
+                        </div>
+                        
+                        <div id="scheduleList">
+                            <!-- Schedule will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load schedule data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadScheduleData();
+        });
+
+        function loadScheduleData() {
+            // Cek apakah ada nim di localStorage/sessionStorage
+            let nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            if (nim) {
+                // Jika ada nim, langsung load data mahasiswa dan jadwal pakai nim
+                loadMahasiswaByNim(nim);
+            } else {
+                // Jika tidak ada, fallback ke session (API lama)
+                loadMahasiswaBySession();
+            }
+        }
+
+        function loadMahasiswaByNim(nim) {
+            fetch(`../api/get_mahasiswa_by_username.php?nim=${nim}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateStudentInfo(data.data.mahasiswa);
+                        loadScheduleList(data.data.mahasiswa.nim);
+                    } else {
+                        showError('Gagal memuat data mahasiswa: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data mahasiswa');
+                });
+        }
+
+        function loadMahasiswaBySession() {
+            fetch('../api/get_mahasiswa_by_username.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateStudentInfo(data.data.mahasiswa);
+                        loadScheduleList(data.data.mahasiswa.nim);
+                    } else {
+                        console.error('Error loading data:', data.message);
+                        showError('Gagal memuat data mahasiswa');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data');
+                });
+        }
+
+        function updateStudentInfo(mahasiswa) {
+            document.getElementById('studentNim').textContent = mahasiswa.nim || 'Tidak tersedia';
+            document.getElementById('studentName').textContent = mahasiswa.nama_lengkap || 'Tidak tersedia';
+            document.getElementById('activeSemester').textContent = `Semester ${mahasiswa.semester || '1'}`;
+            document.getElementById('programStudi').textContent = mahasiswa.nama_prodi || 'Tidak tersedia';
+        }
+
+        function loadScheduleList(nim) {
+            // Load schedule data for the specific student
+            fetch(`../api/jadwal.php?nim=${nim}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.status === 'success') {
+                        displayScheduleData(data.data);
+                    } else {
+                        showError('Gagal memuat jadwal: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    hideLoading();
+                    showError('Terjadi kesalahan saat memuat jadwal');
+                });
+        }
+
+        function displayScheduleData(scheduleData) {
+            const scheduleList = document.getElementById('scheduleList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (!scheduleData || scheduleData.length === 0) {
+                scheduleList.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+                scheduleList.style.display = 'block';
+                
+                // Group schedule by day
+                const scheduleByDay = groupScheduleByDay(scheduleData);
+                
+                let html = '';
+                const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const today = new Date().getDay(); // 0=Sunday, 1=Monday, etc.
+                const todayIndex = today === 0 ? 6 : today; // Adjust for Sunday
+                
+                days.forEach((day, index) => {
+                    const daySchedule = scheduleByDay[day] || [];
+                    if (daySchedule.length > 0) {
+                        const isToday = (index + 1) === todayIndex;
+                        html += `
+                            <div class="day-schedule">
+                                <div class="day-header">
+                                    ${day}
+                                    ${isToday ? '<span class="today-indicator">Hari Ini</span>' : ''}
+                                </div>
+                                <div class="schedule-list">
+                        `;
+                        
+                        daySchedule.forEach(item => {
+                            html += `
+                                <div class="schedule-item">
+                                    <div class="schedule-time">
+                                        <div class="time">${item.jam_mulai || '--:--'}</div>
+                                        <div class="duration">${item.jam_selesai || '--:--'}</div>
+                                    </div>
+                                    <div class="schedule-info-detail">
+                                        <h4>${item.nama_matakuliah || 'Mata Kuliah'}</h4>
+                                        <p>${item.nama_dosen || 'Dosen'}</p>
+                                        <p class="room">${item.nama_ruangan || 'Ruang'}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                scheduleList.innerHTML = html;
+            }
+            
+            // Show schedule container
+            document.getElementById('scheduleContainer').style.display = 'block';
+        }
+
+        function groupScheduleByDay(scheduleData) {
+            const grouped = {};
+            scheduleData.forEach(item => {
+                const day = item.hari || 'Senin';
+                if (!grouped[day]) {
+                    grouped[day] = [];
+                }
+                grouped[day].push(item);
+            });
+            
+            // Sort each day's schedule by time
+            Object.keys(grouped).forEach(day => {
+                grouped[day].sort((a, b) => {
+                    return (a.jam_mulai || '').localeCompare(b.jam_mulai || '');
+                });
+            });
+            
+            return grouped;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMessage').style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                fetch('../api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Clear localStorage/sessionStorage
+                        localStorage.removeItem('nim');
+                        sessionStorage.removeItem('nim');
+                        window.location.href = '../login.html';
+                    } else {
+                        alert('Error saat logout: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        }
+
+        // Sidebar toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html> 

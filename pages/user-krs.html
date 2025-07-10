@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRS Saya - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .krs-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .krs-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .krs-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+        }
+        .info-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .info-card h4 {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        .info-card p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .krs-table {
+            padding: 1.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        td {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .status-terdaftar {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-selesai {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc2626;
+            background: #fee2e2;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .dashboard-content {
+            background: #ffffff;
+            min-height: calc(100vh - 80px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="user-profil.html" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="user-krs.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>KRS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="user-khs.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>KHS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="handleLogout()" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Keluar</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>KRS Saya</h1>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="krs-container">
+                    <div class="krs-header">
+                        <h2>Kartu Rencana Studi (KRS)</h2>
+                        <button class="btn-add" onclick="openAddKRSModal()">
+                            <i class="fas fa-plus"></i> Tambah Mata Kuliah
+                        </button>
+                    </div>
+                    
+                    <div class="krs-info">
+                        <div class="info-card">
+                            <h4>NIM</h4>
+                            <p id="studentNim">Loading...</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Nama</h4>
+                            <p id="studentName">Loading...</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Semester Aktif</h4>
+                            <p id="activeSemester">Loading...</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Total SKS</h4>
+                            <p id="totalSks">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="krs-table">
+                        <div id="loadingMessage" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Memuat data KRS...
+                        </div>
+                        <div id="errorMessage" class="error" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            <span id="errorText">Terjadi kesalahan saat memuat data</span>
+                        </div>
+                        <table id="krsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode MK</th>
+                                    <th>Mata Kuliah</th>
+                                    <th>SKS</th>
+                                    <th>Semester</th>
+                                    <th>Tahun Akademik</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="krsTableBody">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load KRS data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cek apakah ada nim di localStorage/sessionStorage
+            let nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            if (nim) {
+                // Jika ada nim, langsung load data mahasiswa dan KRS pakai nim
+                loadMahasiswaByNim(nim);
+            } else {
+                // Jika tidak ada, fallback ke session (API lama)
+                loadKRSData();
+            }
+        });
+
+        function loadMahasiswaByNim(nim) {
+            fetch(`../api/get_mahasiswa_by_username.php?nim=${nim}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateStudentInfo(data.data.mahasiswa);
+                        loadKRSList(data.data.mahasiswa.nim);
+                    } else {
+                        showError('Gagal memuat data mahasiswa: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data mahasiswa');
+                });
+        }
+
+        function loadKRSData() {
+            // First, get student data
+            fetch('../api/get_mahasiswa_by_username.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateStudentInfo(data.data.mahasiswa);
+                        loadKRSList(data.data.mahasiswa.nim);
+                    } else {
+                        showError('Gagal memuat data mahasiswa: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data mahasiswa');
+                });
+        }
+
+        function updateStudentInfo(mahasiswa) {
+            document.getElementById('studentNim').textContent = mahasiswa.nim || 'Tidak tersedia';
+            document.getElementById('studentName').textContent = mahasiswa.nama_lengkap || 'Tidak tersedia';
+            document.getElementById('activeSemester').textContent = `Semester ${mahasiswa.semester || '1'}`;
+            document.getElementById('totalSks').textContent = `${mahasiswa.total_sks || 0} SKS`;
+        }
+
+        function loadKRSList(nim) {
+            // Load KRS data for the specific student
+            fetch(`../api/krs.php?nim=${nim}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.status === 'success') {
+                        displayKRSData(data.data);
+                    } else {
+                        showError('Gagal memuat data KRS: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    hideLoading();
+                    showError('Terjadi kesalahan saat memuat data KRS');
+                });
+        }
+
+        function displayKRSData(krsData) {
+            const tbody = document.getElementById('krsTableBody');
+            const table = document.getElementById('krsTable');
+            
+            if (!krsData || krsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
+                            <i class="fas fa-info-circle"></i> Belum ada data KRS
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = '';
+                krsData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.kode_matakuliah || '-'}</td>
+                        <td>${item.nama_matakuliah || '-'}</td>
+                        <td>${item.sks || '-'}</td>
+                        <td>${item.semester || '-'}</td>
+                        <td>${item.tahun_akademik || '-'}</td>
+                        <td><span class="status-badge status-terdaftar">${item.status || 'Terdaftar'}</span></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            table.style.display = 'table';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMessage').style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+
+        function openAddKRSModal() {
+            alert('Fitur tambah mata kuliah akan segera tersedia');
+        }
+
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                fetch('../api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '../login.html';
+                    } else {
+                        alert('Error saat logout: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        }
+
+        // Sidebar toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRS Mahasiswa - SIOM</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #22CE83;
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            will-change: transform;
+            transform: translateX(0);
+            background-color: #22CE83 !important;
+            visibility: visible;
+            opacity: 1;
+            display: block;
+        }
+
+        /* Sidebar navigation styles */
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            gap: 1rem;
+        }
+
+        .nav-link:hover,
+        .nav-item.active .nav-link {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-link:hover i,
+        .nav-item.active .nav-link i {
+            color: #FDD017;
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            color: #FDD017;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .dashboard-content {
+            background: #ffffff;
+            flex: 1;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #FDD017;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(253, 208, 23, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .krs-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .krs-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .krs-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-card h4 {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-card p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .krs-table {
+            padding: 1.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        
+        td {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-terdaftar {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-selesai {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #22CE83 0%, #16a085 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(34, 206, 131, 0.4);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #dc2626;
+            background: #fee2e2;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .form-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(34, 206, 131, 0.1);
+        }
+        
+        .form-container h3 {
+            color: #1e293b;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .form-container h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, #22CE83 0%, #16a085 100%);
+            border-radius: 2px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #22CE83;
+            box-shadow: 0 0 0 3px rgba(34, 206, 131, 0.1);
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #22CE83 0%, #16a085 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(34, 206, 131, 0.4);
+        }
+        
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-print i {
+            font-size: 1rem;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 1.2rem 1rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #22CE83 0%, #16a085 100%);
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(34, 206, 131, 0.2);
+            border-color: #22CE83;
+        }
+        
+        .summary-card-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22CE83 0%, #16a085 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.6rem auto;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(34, 206, 131, 0.3);
+        }
+        
+        .summary-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b 0%, #22CE83 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card p {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        
+        /* Special styling for status KRS card */
+        #statusKRSSummary {
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Status-specific colors */
+        #statusKRSSummary:contains("Aktif") {
+            color: #059669 !important;
+        }
+        
+        #statusKRSSummary:contains("Tidak Aktif") {
+            color: #dc2626 !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: row;
+            }
+
+            .sidebar {
+                width: 200px;
+                position: fixed;
+                transform: none;
+                z-index: 1001;
+                transition: none;
+                background: #22CE83 !important;
+                visibility: visible;
+                opacity: 1;
+                display: block;
+                height: 100vh;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                left: 0;
+                top: 0;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .header {
+                padding: 1rem 1.5rem;
+            }
+
+            .sidebar-header {
+                padding: 1rem;
+            }
+
+            .sidebar-header img {
+                max-width: 80px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .nav-link {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .nav-link i {
+                font-size: 1rem;
+            }
+        }
+
+        /* Mobile Responsive for smaller screens */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 180px;
+                position: fixed;
+                transform: none;
+                background-color: #22CE83 !important;
+                visibility: visible;
+                opacity: 1;
+                height: 100vh;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .main-content {
+                margin-left: 180px;
+            }
+
+            .sidebar-header {
+                padding: 0.8rem;
+            }
+
+            .sidebar-header img {
+                max-width: 60px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .nav-link i {
+                font-size: 0.9rem;
+            }
+
+            .dashboard-content {
+                padding: 0.8rem;
+            }
+
+            .krs-header {
+                padding: 1rem;
+            }
+
+            .krs-table {
+                padding: 1rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 0.8rem;
+            }
+
+            .summary-card {
+                padding: 1rem 0.8rem;
+            }
+
+            .summary-card-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+
+            .summary-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .summary-card p {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .sidebar {
+                width: 160px;
+            }
+
+            .main-content {
+                margin-left: 160px;
+            }
+
+            .sidebar-header img {
+                max-width: 50px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 0.9rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.75rem;
+            }
+
+            .nav-link i {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="sidebar-header" style="display:flex;flex-direction:column;align-items:center;">
+                    <img src="../assets/logo-uniki.png" alt="Logo UNIKI" style="max-width:110px;display:block;margin:0 auto 14px auto;">
+                    <h2 style="font-size:1.5rem;font-weight:700;letter-spacing:2px;margin:0;">UNIKI</h2>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="mahasiswa-dashboard.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mahasiswa-profil.html" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profil Mahasiswa</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="mahasiswa-krs.html" class="nav-link">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>KRS</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mahasiswa-khs.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>KHS</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" onclick="handleLogout()" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Header -->
+                <header class="header">
+                    <div class="header-left">
+                        <h1>KRS Mahasiswa</h1>
+                    </div>
+                </header>
+
+                <!-- KRS Content -->
+                <div class="dashboard-content">
+                    <!-- Loading Message -->
+                    <div id="loadingMessage" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Memuat data KRS...
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="error" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <span id="errorText">Terjadi kesalahan saat memuat data</span>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div id="summaryCards" class="summary-cards" style="display: none;">
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-book-open"></i></div>
+                            <h3 id="totalSksSummary">0</h3>
+                            <p>Total SKS</p>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <h3 id="totalMatakuliahSummary">0</h3>
+                            <p>Mata Kuliah</p>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <h3 id="semesterAktifSummary">1</h3>
+                            <p>Semester Aktif</p>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-card-icon"><i class="fas fa-check-circle"></i></div>
+                            <h3 id="statusKRSSummary">Aktif</h3>
+                            <p>Status Mahasiswa</p>
+                        </div>
+                    </div>
+
+                    <!-- KRS Container -->
+                    <div id="krsContainer" class="krs-container" style="display: none;">
+                        <div class="krs-header">
+                            <h2>Kartu Rencana Studi (KRS)</h2>
+                            <button id="printKRSBtn" class="btn-print" onclick="printKRS()">
+                                <i class="fas fa-print"></i>
+                                Cetak KRS
+                            </button>
+                        </div>
+                        
+
+                        <!-- Form Tambah KRS Langsung di Halaman -->
+                        <div id="addKRSFormContainer" class="form-container">
+                            <h3>Tambah Mata Kuliah ke KRS</h3>
+                            <form id="addKRSForm">
+                                <div class="form-group">
+                                    <label for="mata_kuliah_select">Mata Kuliah <span style="color:red;">*</span></label>
+                                    <select id="mata_kuliah_select" name="mata_kuliah" required>
+                                        <option value="">Pilih Mata Kuliah</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="semester_input">Semester <span style="color:red;">*</span></label>
+                                    <select id="semester_input" name="semester" required>
+                                        <option value="">Pilih Semester</option>
+                                        <option value="Ganjil">Ganjil</option>
+                                        <option value="Genap">Genap</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tahun_akademik_input">Tahun Akademik <span style="color:red;">*</span></label>
+                                    <input type="text" id="tahun_akademik_input" name="tahun_akademik" placeholder="2024/2025" required>
+                                </div>
+                                <button type="submit" class="btn-add"><i class="fas fa-plus"></i> Tambah ke KRS</button>
+                            </form>
+                            <div id="addKRSError" class="error" style="display:none;margin-top:1rem;"></div>
+                        </div>
+
+                        <div class="krs-table">
+                            <div id="emptyState" class="empty-state" style="display: none;">
+                                <i class="fas fa-clipboard-list"></i>
+                                <h3>Belum ada data KRS</h3>
+                                <p>Mulai dengan mendaftar mata kuliah untuk semester ini</p>
+                            </div>
+                            
+                            <table id="krsTable" style="display: none;">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Kode MK</th>
+                                        <th>Mata Kuliah</th>
+                                        <th>SKS</th>
+                                        <th>Semester</th>
+                                        <th>Tahun Akademik</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="krsTableBody">
+                                    <!-- Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load KRS data on page load
+        function loadKRSData() {
+            // Cek apakah ada nim di localStorage/sessionStorage
+            let nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            if (nim) {
+                // Jika ada nim, langsung load data mahasiswa dan KRS pakai nim
+                loadMahasiswaByNim(nim);
+            } else {
+                // Jika tidak ada, fallback ke session (API lama)
+                loadMahasiswaBySession();
+            }
+        }
+
+        function loadMahasiswaByNim(nim) {
+            fetch(`../api/get_mahasiswa_by_username.php?nim=${nim}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateStudentInfo(data.data.mahasiswa);
+                        loadKRSList(data.data.mahasiswa.nim);
+                    } else {
+                        showError('Gagal memuat data mahasiswa: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data mahasiswa');
+                });
+        }
+
+        function loadMahasiswaBySession() {
+            fetch('../api/get_mahasiswa_by_username.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateStudentInfo(data.data.mahasiswa);
+                        loadKRSList(data.data.mahasiswa.nim);
+                    } else {
+                        console.error('Error loading data:', data.message);
+                        showError('Gagal memuat data mahasiswa');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat memuat data');
+                });
+        }
+
+        function updateStudentInfo(mahasiswa) {
+            // Function kept for compatibility but elements are removed
+            // No longer updating student info cards as they have been removed
+        }
+
+        function loadKRSList(nim) {
+            // Load KRS data for the specific student
+            fetch(`../api/krs.php?nim=${nim}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.status === 'success') {
+                        displayKRSData(data.data);
+                    } else {
+                        showError('Gagal memuat data KRS: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    hideLoading();
+                    showError('Terjadi kesalahan saat memuat data KRS');
+                });
+        }
+
+        function displayKRSData(krsData) {
+            const tbody = document.getElementById('krsTableBody');
+            const table = document.getElementById('krsTable');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (!krsData || krsData.length === 0) {
+                table.style.display = 'none';
+                emptyState.style.display = 'block';
+                // Update summary cards with zero values
+                updateSummaryCards(0, 0, 1, 'Tidak Aktif');
+            } else {
+                emptyState.style.display = 'none';
+                tbody.innerHTML = '';
+                
+                let totalSks = 0;
+                let totalMatakuliah = krsData.length;
+                
+                krsData.forEach((item, index) => {
+                    totalSks += parseInt(item.sks) || 0;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.kode_matakuliah || '-'}</td>
+                        <td>${item.nama_matakuliah || '-'}</td>
+                        <td>${item.sks || '-'}</td>
+                        <td>${item.semester || '-'}</td>
+                        <td>${item.tahun_akademik || '-'}</td>
+                        <td><span class="status-badge status-terdaftar">${item.status || 'Terdaftar'}</span></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                table.style.display = 'table';
+                
+                // Update summary cards
+                updateSummaryCards(totalSks, totalMatakuliah, 1, 'Aktif');
+            }
+            
+            // Show summary cards and KRS container
+            document.getElementById('summaryCards').style.display = 'grid';
+            document.getElementById('krsContainer').style.display = 'block';
+        }
+        
+        function updateSummaryCards(totalSks, totalMatakuliah, semesterAktif, statusKRS) {
+            document.getElementById('totalSksSummary').textContent = totalSks;
+            document.getElementById('totalMatakuliahSummary').textContent = totalMatakuliah;
+            document.getElementById('semesterAktifSummary').textContent = semesterAktif;
+            
+            // Update status KRS with better formatting
+            const statusElement = document.getElementById('statusKRSSummary');
+            statusElement.textContent = statusKRS;
+            
+            // Add color based on status
+            if (statusKRS === 'Aktif') {
+                statusElement.style.color = '#059669';
+            } else if (statusKRS === 'Tidak Aktif') {
+                statusElement.style.color = '#dc2626';
+            } else {
+                statusElement.style.color = '#1e293b';
+            }
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMessage').style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                fetch('../api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Clear localStorage/sessionStorage
+                        localStorage.removeItem('nim');
+                        sessionStorage.removeItem('nim');
+                        window.location.href = '../login.html';
+                    } else {
+                        alert('Error saat logout: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        }
+
+        // Print KRS function
+        function printKRS() {
+            // Ambil NIM mahasiswa
+            let nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            if (!nim) {
+                // Fallback ke session
+                fetch('../api/get_mahasiswa_by_username.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            nim = data.data.mahasiswa.nim;
+                            openPrintKRSPage(nim);
+                        } else {
+                            alert('Gagal mendapatkan data mahasiswa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat mendapatkan data mahasiswa');
+                    });
+            } else {
+                openPrintKRSPage(nim);
+            }
+        }
+        
+        function openPrintKRSPage(nim) {
+            // Buka halaman print KRS di tab baru
+            window.open(`print-krs.html?nim=${nim}`, '_blank');
+        }
+
+        // Load dropdown mata kuliah saat halaman siap
+        function loadMataKuliahDropdown() {
+            fetch('../api/matakuliah.php')
+                .then(res => res.json())
+                .then(result => {
+                    const select = document.getElementById('mata_kuliah_select');
+                    select.innerHTML = '<option value="">Pilih Mata Kuliah</option>';
+                    if(result.status === 'success') {
+                        result.data.forEach(mk => {
+                            const option = document.createElement('option');
+                            option.value = mk.id;
+                            option.textContent = `${mk.kode_mk} - ${mk.nama_mk} (${mk.sks} SKS)`;
+                            select.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    const select = document.getElementById('mata_kuliah_select');
+                    select.innerHTML = '<option value="">Gagal memuat data</option>';
+                });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            loadKRSData();
+            loadMataKuliahDropdown();
+        });
+        document.getElementById('addKRSForm').onsubmit = function(e) {
+            e.preventDefault();
+            const nim = localStorage.getItem('nim') || sessionStorage.getItem('nim');
+            if (!nim) {
+                document.getElementById('addKRSError').textContent = 'NIM tidak ditemukan. Silakan login ulang.';
+                document.getElementById('addKRSError').style.display = 'block';
+                return;
+            }
+            const formData = {
+                nim: nim,
+                mata_kuliah_id: document.getElementById('mata_kuliah_select').value,
+                semester: document.getElementById('semester_input').value,
+                tahun_akademik: document.getElementById('tahun_akademik_input').value
+            };
+            fetch('../api/krs.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    document.getElementById('addKRSForm').reset();
+                    document.getElementById('addKRSError').style.display = 'none';
+                    loadKRSData();
+                } else {
+                    document.getElementById('addKRSError').textContent = result.message || 'Gagal menambah KRS';
+                    document.getElementById('addKRSError').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                document.getElementById('addKRSError').textContent = 'Terjadi kesalahan saat menambah KRS';
+                document.getElementById('addKRSError').style.display = 'block';
+            });
+        };
+    </script>
+</body>
+</html> 
